@@ -1,4 +1,4 @@
-package com.schoolsystem.secuityJWT;
+package com.schoolsystem.secuity;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;

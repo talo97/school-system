@@ -1,7 +1,7 @@
 package com.schoolsystem.student;
 
 import com.schoolsystem.common.CommonEntity;
-import com.schoolsystem.schoolClass.EntityClass;
+import com.schoolsystem.classes.EntityClass;
 import lombok.Getter;
 import lombok.Setter;
 import com.schoolsystem.parent.EntityParent;

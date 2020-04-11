@@ -2,7 +2,7 @@ package com.schoolsystem.lesson;
 
 import com.schoolsystem.common.CommonEntity;
 import com.schoolsystem.course.EntityTeacherCourse;
-import com.schoolsystem.schoolClass.EntityClass;
+import com.schoolsystem.classes.EntityClass;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,4 +1,4 @@
-package com.schoolsystem.schoolClass;
+package com.schoolsystem.classes;
 
 import com.schoolsystem.common.CommonEntity;
 import com.schoolsystem.teacher.EntityTeacher;

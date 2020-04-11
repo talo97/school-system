@@ -1,4 +1,4 @@
-package com.schoolsystem.secuityJWT;
+package com.schoolsystem.secuity;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

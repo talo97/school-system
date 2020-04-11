@@ -1,4 +1,4 @@
-package com.schoolsystem.secuityJWT;
+package com.schoolsystem.secuity;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
