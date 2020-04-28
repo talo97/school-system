@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 public class EntityUser extends CommonEntity {
@@ -40,12 +40,12 @@ public class EntityUser extends CommonEntity {
     @Column(name = "user_type")
     private EnumUserType userType;
 
-    @OneToOne(mappedBy="user")
+    @OneToOne(mappedBy="users")
     private EntityStudent entityStudent;
 
-    @OneToOne(mappedBy="user")
+    @OneToOne(mappedBy="users")
     private EntityTeacher entityTeacher;
 
-    @OneToOne(mappedBy="user")
+    @OneToOne(mappedBy="users")
     private EntityParent entityParent;
 }

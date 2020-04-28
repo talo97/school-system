@@ -16,8 +16,8 @@ import javax.persistence.*;
 public class EntityStudent extends CommonEntity {
 
     @OneToOne
-    @JoinColumn(name = "user")
-    private EntityUser user;
+    @JoinColumn(name = "users")
+    private EntityUser users;
 
     @OneToOne
     @JoinColumn(name = "parent")
