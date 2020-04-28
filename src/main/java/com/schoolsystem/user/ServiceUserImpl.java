@@ -15,13 +15,10 @@ public class ServiceUserImpl extends CommonServiceImpl<EntityUser, DaoUser> impl
 
     private final ModelMapper modelMapper;
 
-    private final ServiceParent serviceParent;
-
     @Autowired
-    public ServiceUserImpl(DaoUser repository, ModelMapper modelMapper, ServiceParent serviceParent) {
+    public ServiceUserImpl(DaoUser repository, ModelMapper modelMapper) {
         super(repository);
         this.modelMapper = modelMapper;
-        this.serviceParent = serviceParent;
     }
 
     @Override

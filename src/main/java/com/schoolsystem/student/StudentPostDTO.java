@@ -16,7 +16,7 @@ public class StudentPostDTO {
 
     private long birthDate = 0;
 
-    private Integer classId;
+    private Long classId;
 
     public boolean isEmpty() {
         return login == null || login.isEmpty() || password == null || password.isEmpty() ||
