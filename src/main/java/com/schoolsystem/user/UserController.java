@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity<List<UserGetDTO>> getTeachers() {
         List<UserGetDTO> lst = new ArrayList<>();
         serviceTeacher.getAll().forEach(e -> {
-            lst.add(modelMapper.map(e, UserGetDTO.class));
+            lst.add(modelMapper.map(e.getUsers(), UserGetDTO.class));
         });
         return ResponseEntity.ok(lst);
     }
