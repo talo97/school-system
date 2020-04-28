@@ -33,7 +33,6 @@ public class ServiceUserImpl extends CommonServiceImpl<EntityUser, DaoUser> impl
     public EntityUser save(UserPostDTO userDTO, EnumUserType userType) {
         EntityUser user;
         user = modelMapper.map(userDTO, EntityUser.class);
-        user.setUserGroup(EnumUserGroup.DEFAULT);
         user.setUserType(userType);
         this.save(user);
         return user;

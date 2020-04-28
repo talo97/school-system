@@ -25,9 +25,6 @@ public class EntityUser extends CommonEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "user_group")
-    private EnumUserGroup userGroup;
-
     @Column(name = "first_name")
     private String firstName = "";
 

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,10 +35,15 @@ public class UserController {
         serviceTeacher.save(user);
         return ResponseEntity.ok("Teacher added successfully");
     }
+
     //TODO::for testing purposes
     @GetMapping("/getTeachers")
-    public ResponseEntity<List<EntityTeacher>> getTeachers(){
-        return ResponseEntity.ok(serviceTeacher.getAll());
+    public ResponseEntity<List<UserGetDTO>> getTeachers() {
+        List<UserGetDTO> lst = new ArrayList<>();
+        serviceTeacher.getAll().forEach(e -> {
+            lst.add(modelMapper.map(e, UserGetDTO.class));
+        });
+        return ResponseEntity.ok(lst);
     }
 
 

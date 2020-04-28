@@ -18,7 +18,7 @@ public class JwtUserDetails implements UserDetails {
     public JwtUserDetails(EntityUser user) {
         this.login = user.getLogin();
         this.password = user.getPassword();
-        this.authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getUserGroup()));
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getUserType()));
     }
 
     @Override
