@@ -1,11 +1,13 @@
 package com.schoolsystem.user;
 
+import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.teacher.ServiceTeacher;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,13 +27,19 @@ public class UserController {
     }
 
     @PostMapping("/addTeacher")
-    public ResponseEntity<?> addParent(@Valid @RequestBody UserPostDTO user) {
+    public ResponseEntity<?> addTeacher(@Valid @RequestBody UserPostDTO user) {
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().body("Contains empty field!");
         }
         serviceTeacher.save(user);
         return ResponseEntity.ok("Teacher added successfully");
     }
+    //TODO::for testing purposes
+    @GetMapping("/getTeachers")
+    public ResponseEntity<List<EntityTeacher>> getTeachers(){
+        return ResponseEntity.ok(serviceTeacher.getAll());
+    }
+
 
     //TODO::change return value
     @PostMapping("/addParentStudent")
