@@ -28,15 +28,17 @@ public class UserController {
     }
 
     @PostMapping("/addTeacher")
-    public ResponseEntity<?> addTeacher(@Valid @RequestBody UserPostDTO user) {
+    public ResponseEntity<UserGetDTO> addTeacher(@Valid @RequestBody UserPostDTO user) {
         if (user.isEmpty()) {
-            return ResponseEntity.badRequest().body("Contains empty field!");
+            return ResponseEntity.badRequest().build();
         }
         serviceTeacher.save(user);
-        return ResponseEntity.ok("Teacher added successfully");
+        UserGetDTO savedUser = modelMapper.map(user, UserGetDTO.class);
+        savedUser.setUserType(EnumUserType.TEACHER);
+        return ResponseEntity.ok(savedUser);
     }
 
-    //TODO::for testing purposes
+
     @GetMapping("/getTeachers")
     public ResponseEntity<List<UserGetDTO>> getTeachers() {
         List<UserGetDTO> lst = new ArrayList<>();
