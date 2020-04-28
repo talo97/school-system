@@ -23,7 +23,7 @@ public class ServiceTeacherImpl extends CommonServiceImpl<EntityTeacher, DaoTeac
     @Override
     public EntityTeacher save(UserPostDTO user) {
         EntityTeacher entityTeacher =new EntityTeacher();
-        entityTeacher.setUser(serviceUser.save(user, EnumUserType.TEACHER));
+        entityTeacher.setUsers(serviceUser.save(user, EnumUserType.TEACHER));
         save(entityTeacher);
         return entityTeacher;
     }
