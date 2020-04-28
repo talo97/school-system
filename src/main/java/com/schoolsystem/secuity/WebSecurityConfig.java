@@ -57,10 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .cors().and()
-                .authorizeRequests().antMatchers("/api/authenticate", "/api/addTeacher").permitAll()
+                //TODO::::uncomment this \/
+                //.authorizeRequests().antMatchers("/api/authenticate", "/api/addTeacher").permitAll()
                // .antMatchers("/admin", "/api/users", "/deleteUser/user/{id}").hasRole("ADMIN")
-                .anyRequest().authenticated().and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+//                .anyRequest().authenticated().and()
+//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                //TODO::uncomment this /\
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
