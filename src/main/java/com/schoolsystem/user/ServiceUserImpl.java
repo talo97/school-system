@@ -2,6 +2,8 @@ package com.schoolsystem.user;
 
 import com.schoolsystem.common.CommonServiceImpl;
 import com.schoolsystem.common.EnumUserGroup;
+import com.schoolsystem.parent.EntityParent;
+import com.schoolsystem.parent.ServiceParent;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,24 +15,27 @@ public class ServiceUserImpl extends CommonServiceImpl<EntityUser, DaoUser> impl
 
     private final ModelMapper modelMapper;
 
+    private final ServiceParent serviceParent;
+
     @Autowired
-    public ServiceUserImpl(DaoUser repository, ModelMapper modelMapper) {
+    public ServiceUserImpl(DaoUser repository, ModelMapper modelMapper, ServiceParent serviceParent) {
         super(repository);
         this.modelMapper = modelMapper;
+        this.serviceParent = serviceParent;
     }
 
     @Override
-    public Optional<EntityUser> getByLogin(String login) {
+    public Optional<EntityUser> findByLogin(String login) {
         return repository.findByLogin(login);
     }
 
     @Override
-    public Optional<EntityUser> save(UserPostDTO userDTO) {
-        //TODO::test, change later
-        Optional<EntityUser> user;
-        user = Optional.of(modelMapper.map(userDTO, EntityUser.class));
-        user.get().setUserGroup(EnumUserGroup.DEFAULT);
-        this.save(user.get());
+    public EntityUser save(UserPostDTO userDTO, EnumUserType userType) {
+        EntityUser user;
+        user = modelMapper.map(userDTO, EntityUser.class);
+        user.setUserGroup(EnumUserGroup.DEFAULT);
+        user.setUserType(userType);
+        this.save(user);
         return user;
     }
 }

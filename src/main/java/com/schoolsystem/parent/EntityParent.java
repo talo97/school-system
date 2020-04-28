@@ -1,6 +1,7 @@
 package com.schoolsystem.parent;
 
 import com.schoolsystem.common.CommonEntity;
+import com.schoolsystem.student.EntityStudent;
 import com.schoolsystem.user.EntityUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,8 @@ public class EntityParent  extends CommonEntity {
     @OneToOne
     @JoinColumn(name="user")
     private EntityUser user;
+
+    @OneToOne(mappedBy="parent")
+    private EntityStudent entityStudent;
 
 }

@@ -5,7 +5,7 @@ import com.schoolsystem.common.CommonService;
 import java.util.Optional;
 
 public interface ServiceUser extends CommonService<EntityUser> {
-    Optional<EntityUser> getByLogin(String login);
+    Optional<EntityUser> findByLogin(String login);
 
-    Optional<EntityUser> save(UserPostDTO user);
+    EntityUser save(UserPostDTO user, EnumUserType userType);
 }
