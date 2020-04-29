@@ -10,6 +10,7 @@ import com.schoolsystem.student.ServiceStudent;
 import com.schoolsystem.student.StudentGetDTO;
 import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.teacher.ServiceTeacher;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,7 +67,10 @@ public class UserController {
         return matcher.matches();
     }
 
-    @PostMapping("/addTeacher")
+    @PostMapping("/teachers")
+    @ApiOperation(value = "Add teacher by given JSON",
+            notes = "Admin only operation",
+            response = UserGetDTO.class)
     public ResponseEntity<UserGetDTO> addTeacher(@Valid @RequestBody UserPostDTO user) {
         if (user.isEmpty() || !checkIfLoginIsAvailable(user.getLogin())
                 || !validateLogin(user.getLogin()) || !validatePassword(user.getPassword())) {
@@ -80,7 +84,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/getCurrentUser")
+    @GetMapping("/currentUser")
     public ResponseEntity<UserGetDTO> getCurrentUser() {
         Optional<EntityUser> currentUser = getCurrentUserFromToken();
         Optional<UserGetDTO> currentUserDTO = Optional.empty();
@@ -92,14 +96,14 @@ public class UserController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PostMapping(value = "/checkIfLoginIsAvailable")
+    @PostMapping(value = "/loginAvailable")
     public ResponseEntity<Boolean> checkIfLoginIsAvailable(@Valid @RequestBody NameDTO name) {
         return serviceUser.findByLogin(name.getName()).map(response -> ResponseEntity.ok().body(false))
                 .orElse(ResponseEntity.ok(true));
     }
 
 
-    @GetMapping("/getTeachers")
+    @GetMapping("/teachers")
     public ResponseEntity<List<UserGetDTO>> getTeachers() {
         List<UserGetDTO> lst = new ArrayList<>();
         serviceTeacher.getAll().forEach(e -> {
@@ -110,7 +114,7 @@ public class UserController {
         return ResponseEntity.ok(lst);
     }
 
-    @GetMapping("/getParents")
+    @GetMapping("/parents")
     public ResponseEntity<List<UserGetDTO>> getParents() {
         List<UserGetDTO> lst = new ArrayList<>();
         serviceParent.getAll().forEach(e -> {
@@ -121,7 +125,7 @@ public class UserController {
         return ResponseEntity.ok(lst);
     }
 
-    @GetMapping("/getStudents")
+    @GetMapping("/students")
     public ResponseEntity<List<StudentGetDTO>> getStudents() {
         List<StudentGetDTO> lst = new ArrayList<>();
         serviceStudent.getAll().forEach(e -> {
@@ -135,7 +139,7 @@ public class UserController {
     }
 
     //XDDDDDDDD plz don't look
-    @PostMapping("/addParentStudent")
+    @PostMapping("/parentsStudents")
     public ResponseEntity<ParentStudentGetDTO> addParentStudent(@Valid @RequestBody ParentStudentPostDTO toSave) {
         if (toSave.isEmpty() || !checkIfLoginIsAvailable(toSave.getStudent().getLogin())
                 || !checkIfLoginIsAvailable(toSave.getParent().getLogin())

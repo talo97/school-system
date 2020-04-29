@@ -30,7 +30,7 @@ public class CourseController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/addCourse")
+    @PostMapping("/courses")
     public ResponseEntity<CourseGetDTO> addCourse(@Valid @RequestBody CoursePostDTO course) {
         if (course.getName() == null || course.getName().isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -41,13 +41,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping("/getAllCourses")
+    @GetMapping("/courses")
     public ResponseEntity<List<CourseGetDTO>> getAllCourses() {
         return ResponseEntity.ok(modelMapper.map(serviceCourse.getAll(), new TypeToken<List<CourseGetDTO>>() {
         }.getType()));
     }
 
-    @DeleteMapping("deleteCourse/{id}")
+    @DeleteMapping("courses/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable Long id){
         Optional<EntityCourse> course = serviceCourse.get(id);
         if(course.isPresent()){
@@ -62,7 +62,7 @@ public class CourseController {
         }
     }
 
-    @PutMapping("editCourse/{id}")
+    @PutMapping("courses/{id}")
     public ResponseEntity<?> editCourse(@Valid @RequestBody CoursePostDTO courseNew, @PathVariable Long id){
         Optional<EntityCourse> course = serviceCourse.get(id);
         if(course.isPresent()){
@@ -74,7 +74,7 @@ public class CourseController {
         }
     }
 
-    @PostMapping("/addTeacherCourse")
+    @PostMapping("/teacherCourses")
     public ResponseEntity<?> addTeacherCourse(@Valid @RequestBody TeacherCoursePostDTO teacherCoursePostDTO) {
         Optional<EntityTeacher> teacher = serviceTeacher.get(teacherCoursePostDTO.getTeacherId());
         Optional<EntityCourse> course = serviceCourse.get(teacherCoursePostDTO.getCourseId());
@@ -97,7 +97,7 @@ public class CourseController {
         return ResponseEntity.ok(savedTeacherCourse);
     }
 
-    @GetMapping("/getAllTeacherCourses")
+    @GetMapping("/teacherCourses")
     public ResponseEntity<?> getAllTeacherCourses(){
         List<TeacherCourseGetDTO> dtoList = new ArrayList<>();
         serviceTeacherCourse.getAll().forEach(e-> dtoList.add(new TeacherCourseGetDTO(modelMapper.map(e.getCourse(), CourseGetDTO.class), modelMapper.map(e.getTeacher().getUsers(),UserGetDTO.class))));

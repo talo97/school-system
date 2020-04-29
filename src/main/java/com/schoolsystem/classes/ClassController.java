@@ -32,13 +32,13 @@ public class ClassController {
         return classPostDTOList;
     }
 
-    @PostMapping("/addClass")
+    @PostMapping("/classes")
     public ResponseEntity<ClassPostDTO> addClass(@Valid @RequestBody ClassPostDTO classPostDTO) {
         return serviceClass.save(classPostDTO).map(response -> ResponseEntity.ok().body(classPostDTO))
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("/getAllClasses")
+    @GetMapping("/classes")
     public ResponseEntity<?> getAllClasses() {
         return ResponseEntity.ok().body(mapEntityListToDTO(serviceClass.getAll()));
     }
