@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .cors().and()
                 //TODO::::uncomment this \/
-                .authorizeRequests().antMatchers("/api/authenticate").permitAll()
+                .authorizeRequests().antMatchers("/api/authenticate","swagger-ui.html").permitAll()
                 .antMatchers(HttpMethod.DELETE,"/api/courses/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT,"/api/courses").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST,"/api/teachers", "/api/loginAvailable", "/api/parentsStudents", "/api/classes", "/api/courses", "/api/teacherCourses").hasRole("ADMIN")
