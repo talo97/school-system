@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ClassGetDTO {
+    private Long id;
     private String name;
     private EnumEducationStage enumEducationStage;
     private UserGetDTO supervisor;

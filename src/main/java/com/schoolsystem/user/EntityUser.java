@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Table(name = "users")
@@ -32,7 +33,7 @@ public class EntityUser extends CommonEntity {
     private String lastName= "";
 
     @Column(name = "birthdate")
-    private long birthDate = 0;
+    private Date birthDate;
 
     @Column(name = "user_type")
     private EnumUserType userType;

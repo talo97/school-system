@@ -3,6 +3,8 @@ package com.schoolsystem.user;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @Setter
 @Getter
 public class UserPostDTO {
@@ -14,7 +16,7 @@ public class UserPostDTO {
 
     private String lastName;
 
-    private long birthDate = 0;
+    private Date birthDate;
 
     public boolean isEmpty() {
         return login == null || login.isEmpty() || password == null || password.isEmpty() ||

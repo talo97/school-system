@@ -3,6 +3,8 @@ package com.schoolsystem.student;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @Setter
 @Getter
 public class StudentPostDTO {
@@ -14,7 +16,7 @@ public class StudentPostDTO {
 
     private String lastName;
 
-    private long birthDate = 0;
+    private Date birthDate;
 
     private Long classId;
 

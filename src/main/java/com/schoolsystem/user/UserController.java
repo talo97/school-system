@@ -1,10 +1,14 @@
 package com.schoolsystem.user;
 
+import com.schoolsystem.classes.ClassGetDTO;
 import com.schoolsystem.classes.EntityClass;
 import com.schoolsystem.classes.ServiceClass;
 import com.schoolsystem.parent.EntityParent;
 import com.schoolsystem.parent.ServiceParent;
+import com.schoolsystem.student.EntityStudent;
 import com.schoolsystem.student.ServiceStudent;
+import com.schoolsystem.student.StudentGetDTO;
+import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.teacher.ServiceTeacher;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,8 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
@@ -42,16 +48,37 @@ public class UserController {
         return serviceUser.findByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
+    private boolean checkIfLoginIsAvailable(String login) {
+        return !serviceUser.findByLogin(login).isPresent();
+    }
+
+    private final Pattern VALID_PASSWORD_REGEX = Pattern.compile("^(?=.*[a-zA-Z\\d].*)[a-zA-Z\\d!@#$%&*]{3,}$", Pattern.CASE_INSENSITIVE);
+
+    private final Pattern VALID_USERNAME_REGEX = Pattern.compile("^[a-z0-9_-]{3,25}$", Pattern.CASE_INSENSITIVE);
+
+    private boolean validateLogin(String login) {
+        Matcher matcher = VALID_USERNAME_REGEX.matcher(login);
+        return matcher.matches();
+    }
+
+    private boolean validatePassword(String password) {
+        Matcher matcher = VALID_PASSWORD_REGEX.matcher(password);
+        return matcher.matches();
+    }
+
     @PostMapping("/addTeacher")
     public ResponseEntity<UserGetDTO> addTeacher(@Valid @RequestBody UserPostDTO user) {
-        if (user.isEmpty()) {
+        if (user.isEmpty() || !checkIfLoginIsAvailable(user.getLogin())
+                || !validateLogin(user.getLogin()) || !validatePassword(user.getPassword())) {
             return ResponseEntity.badRequest().build();
         }
-        serviceTeacher.save(user);
-        UserGetDTO savedUser = modelMapper.map(user, UserGetDTO.class);
-        savedUser.setUserType(EnumUserType.TEACHER);
-        return ResponseEntity.ok(savedUser);
+        EntityTeacher savedTeacher = serviceTeacher.save(user);
+        UserGetDTO dtoToReturn = modelMapper.map(user, UserGetDTO.class);
+        dtoToReturn.setUserType(EnumUserType.TEACHER);
+        dtoToReturn.setId(savedTeacher.getId());
+        return ResponseEntity.ok(dtoToReturn);
     }
+
 
     @GetMapping("/getCurrentUser")
     public ResponseEntity<UserGetDTO> getCurrentUser() {
@@ -65,8 +92,8 @@ public class UserController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PostMapping(value = "/validateUsername")
-    public ResponseEntity<Boolean> validateUsername(@Valid @RequestBody NameDTO name) {
+    @PostMapping(value = "/checkIfLoginIsAvailable")
+    public ResponseEntity<Boolean> checkIfLoginIsAvailable(@Valid @RequestBody NameDTO name) {
         return serviceUser.findByLogin(name.getName()).map(response -> ResponseEntity.ok().body(false))
                 .orElse(ResponseEntity.ok(true));
     }
@@ -76,21 +103,60 @@ public class UserController {
     public ResponseEntity<List<UserGetDTO>> getTeachers() {
         List<UserGetDTO> lst = new ArrayList<>();
         serviceTeacher.getAll().forEach(e -> {
-            lst.add(modelMapper.map(e.getUsers(), UserGetDTO.class));
+            UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
+            temp.setId(e.getId());
+            lst.add(temp);
         });
         return ResponseEntity.ok(lst);
     }
 
+    @GetMapping("/getParents")
+    public ResponseEntity<List<UserGetDTO>> getParents() {
+        List<UserGetDTO> lst = new ArrayList<>();
+        serviceParent.getAll().forEach(e -> {
+            UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
+            temp.setId(e.getId());
+            lst.add(temp);
+        });
+        return ResponseEntity.ok(lst);
+    }
+
+    @GetMapping("/getStudents")
+    public ResponseEntity<List<StudentGetDTO>> getStudents() {
+        List<StudentGetDTO> lst = new ArrayList<>();
+        serviceStudent.getAll().forEach(e -> {
+            StudentGetDTO temp = modelMapper.map(e.getUsers(), StudentGetDTO.class);
+            temp.setEntityClass(modelMapper.map(e.getStudentClass(), ClassGetDTO.class));
+            temp.getEntityClass().setSupervisor(modelMapper.map(e.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
+            temp.setId(e.getId());
+            lst.add(temp);
+        });
+        return ResponseEntity.ok(lst);
+    }
+
+    //XDDDDDDDD plz don't look
     @PostMapping("/addParentStudent")
-    public ResponseEntity<?> addParentStudent(@Valid @RequestBody ParentStudentPostDTO toSave) {
-        if (toSave.isEmpty()) {
+    public ResponseEntity<ParentStudentGetDTO> addParentStudent(@Valid @RequestBody ParentStudentPostDTO toSave) {
+        if (toSave.isEmpty() || !checkIfLoginIsAvailable(toSave.getStudent().getLogin())
+                || !checkIfLoginIsAvailable(toSave.getParent().getLogin())
+                || !validateLogin(toSave.getStudent().getLogin()) || !validatePassword(toSave.getStudent().getPassword())
+                || !validateLogin(toSave.getParent().getLogin()) || !validatePassword(toSave.getParent().getPassword())
+                || toSave.getStudent().getLogin().equals(toSave.getParent().getLogin())) {
             return ResponseEntity.badRequest().build();
         }
         Optional<EntityClass> entityClass = serviceClass.get(toSave.getStudent().getClassId());
         if (entityClass.isPresent()) {
-            EntityParent entityParent = serviceParent.save(toSave.getParent());
-            serviceStudent.save(toSave.getStudent(), entityParent, entityClass.get());
-            return ResponseEntity.ok("XD");
+            EntityParent savedParent = serviceParent.save(toSave.getParent());
+            EntityStudent savedStudent = serviceStudent.save(toSave.getStudent(), savedParent, entityClass.get());
+            ParentStudentGetDTO dtoToReturn = new ParentStudentGetDTO();
+            dtoToReturn.setParent(modelMapper.map(savedParent.getUsers(), UserGetDTO.class));
+            dtoToReturn.getParent().setUserType(EnumUserType.TEACHER);
+            dtoToReturn.getParent().setId(savedParent.getId());
+            dtoToReturn.setStudent(modelMapper.map(savedStudent.getUsers(), StudentGetDTO.class));
+            dtoToReturn.getStudent().setEntityClass(modelMapper.map(savedStudent.getStudentClass(), ClassGetDTO.class));
+            dtoToReturn.getStudent().getEntityClass().setSupervisor(modelMapper.map(savedStudent.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
+            dtoToReturn.getStudent().setId(savedStudent.getId());
+            return ResponseEntity.ok(dtoToReturn);
         } else {
             return ResponseEntity.badRequest().build();
         }
