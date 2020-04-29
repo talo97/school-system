@@ -1,5 +1,6 @@
 package com.schoolsystem.student;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class StudentPostDTO {
     private String firstName;
 
     private String lastName;
-
+    @ApiModelProperty(value = "Date format: yyyy-mm-dd")
     private Date birthDate;
 
     private Long classId;
