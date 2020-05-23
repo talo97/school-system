@@ -20,6 +20,9 @@ public class EntityLesson extends CommonEntity {
     @Column(name = "lesson_number")
     private EnumLessonNumber lessonNumber;
 
+    @Column(name = "active")
+    private boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "class")
     private EntityClass entityClass;

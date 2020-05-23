@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/webjars/**",
             // other public endpoints of your API may be appended to this array
-            "/api/authenticate"
+            "/api/authenticate",
     };
 
     public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter) {
@@ -73,9 +73,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 //TODO::::uncomment this \/
                 .authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers(HttpMethod.DELETE,"/api/courses/{id}").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT,"/api/courses").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST,"/api/teachers", "/api/loginAvailable", "/api/parentsStudents", "/api/classes", "/api/courses", "/api/teacherCourses").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/api/courses/{id}","/api/lessons/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/api/courses/{id}", "/api/lessons/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/api/teachers", "/api/loginAvailable", "/api/parentsStudents", "/api/classes", "/api/courses", "/api/teacherCourses", "/api/lessons").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

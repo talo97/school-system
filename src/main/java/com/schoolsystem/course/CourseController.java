@@ -63,7 +63,7 @@ public class CourseController {
     }
 
     @PutMapping("courses/{id}")
-    public ResponseEntity<?> editCourse(@Valid @RequestBody CoursePostDTO courseNew, @PathVariable Long id){
+    public ResponseEntity<?> editCourse(@Valid @RequestBody CoursePostDTO courseNew,@Valid @PathVariable Long id){
         Optional<EntityCourse> course = serviceCourse.get(id);
         if(course.isPresent()){
             course.get().setName(courseNew.getName());
