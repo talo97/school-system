@@ -60,15 +60,15 @@ public class LessonController {
         return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllActive()));
     }
 
-    @GetMapping("/lessons/{classId}")
-    public ResponseEntity<List<LessonGetDTO>> getLessons(@Valid @PathVariable Long classId) {
-        return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByEntityClassId(classId)));
+    @GetMapping("/lessonsClass/{id}")
+    public ResponseEntity<List<LessonGetDTO>> getLessons(@Valid @PathVariable Long id) {
+        return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByEntityClassId(id)));
     }
 
-    @GetMapping("/lessonsTeacher/{teacherId}")
-    public ResponseEntity<?> getLessonsTeacher(@Valid @PathVariable Long teacherId) {
+    @GetMapping("/lessonsTeacher/{id}")
+    public ResponseEntity<?> getLessonsTeacher(@Valid @PathVariable Long id) {
         List<LessonGetDTO> dtoList = new ArrayList<>();
-        serviceTeacher.get(teacherId).ifPresent(e -> dtoList.addAll(mapEntityToGetDTO(serviceLesson.findAllByTeacher(e))));
+        serviceTeacher.get(id).ifPresent(e -> dtoList.addAll(mapEntityToGetDTO(serviceLesson.findAllByTeacher(e))));
         return ResponseEntity.ok().body(dtoList);
     }
 
