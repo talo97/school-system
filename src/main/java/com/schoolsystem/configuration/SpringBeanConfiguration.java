@@ -1,6 +1,8 @@
 package com.schoolsystem.configuration;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.RequestHandler;
@@ -16,11 +18,13 @@ import java.util.Collections;
 public class SpringBeanConfiguration {
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        return modelMapper;
     }
 
     @Bean
-    public Docket swaggerConfiguration(){
+    public Docket swaggerConfiguration() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 //.paths(PathSelectors.ant("/api/*"))
@@ -28,11 +32,11 @@ public class SpringBeanConfiguration {
                 .build().apiInfo(apiDetails());
     }
 
-    private ApiInfo apiDetails(){
+    private ApiInfo apiDetails() {
         return new ApiInfo(
                 "School system API",
                 "Uni database project",
-                "1.0","Free to use",null,"","", Collections.emptyList()
+                "1.0", "Free to use", null, "", "", Collections.emptyList()
         );
     }
 }

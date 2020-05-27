@@ -6,6 +6,7 @@ package com.schoolsystem.user;
         import com.schoolsystem.parent.ServiceParent;
         import org.modelmapper.ModelMapper;
         import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.security.core.context.SecurityContextHolder;
         import org.springframework.stereotype.Service;
 
         import java.util.Optional;
@@ -33,5 +34,10 @@ public class ServiceUserImpl extends CommonServiceImpl<EntityUser, DaoUser> impl
         user.setUserType(userType);
         this.save(user);
         return user;
+    }
+
+    @Override
+    public Optional<EntityUser> getCurrentUserFromToken() {
+        return repository.findByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

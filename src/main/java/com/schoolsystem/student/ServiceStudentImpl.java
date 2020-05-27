@@ -11,6 +11,8 @@ import com.schoolsystem.user.UserPostDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ServiceStudentImpl extends CommonServiceImpl<EntityStudent, DaoStudent> implements ServiceStudent {
     private final ServiceUser serviceUser;
@@ -29,5 +31,10 @@ public class ServiceStudentImpl extends CommonServiceImpl<EntityStudent, DaoStud
         entityStudent.setStudentClass(entityClass);
         save(entityStudent);
         return entityStudent;
+    }
+
+    @Override
+    public List<EntityStudent> findAllByStudentClass(EntityClass entityClass) {
+        return repository.findAllByStudentClass(entityClass);
     }
 }

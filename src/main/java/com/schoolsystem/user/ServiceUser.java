@@ -8,4 +8,6 @@ public interface ServiceUser extends CommonService<EntityUser> {
     Optional<EntityUser> findByLogin(String login);
 
     EntityUser save(UserPostDTO user, EnumUserType userType);
+
+    Optional<EntityUser> getCurrentUserFromToken();
 }

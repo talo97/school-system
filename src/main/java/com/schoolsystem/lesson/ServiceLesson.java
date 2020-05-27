@@ -2,13 +2,13 @@ package com.schoolsystem.lesson;
 
 import com.schoolsystem.classes.EntityClass;
 import com.schoolsystem.common.CommonService;
+import com.schoolsystem.course.EntityTeacherCourse;
 import com.schoolsystem.teacher.EntityTeacher;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ServiceLesson extends CommonService<EntityLesson> {
-    List<EntityLesson> findAllByEntityClassId(Long id);
+    List<EntityLesson> findAllByClass(EntityClass entityClass);
 
     Boolean doesLessonAlreadyExist(EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber, Long entityClassId);
 
@@ -16,5 +16,11 @@ public interface ServiceLesson extends CommonService<EntityLesson> {
 
     List<EntityLesson> findAllByTeacher(EntityTeacher entityTeacher);
 
+    List<EntityLesson> findAllByTeacherAndClass(EntityTeacher entityTeacher, EntityClass studentClass);
+
+    Boolean isThereLessonForTeacherCourseInClass(EntityTeacherCourse teacherCourse, EntityClass entityClass);
+
     List<EntityLesson> findAllActive();
+
+    List<EntityTeacherCourse> findDistinctTeacherCoursesOfGivenClass(EntityClass entityClass);
 }

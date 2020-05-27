@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "mark")
@@ -21,7 +22,7 @@ public class EntityMark extends CommonEntity {
     private String description;
 
     @Column(name = "last_change")
-    private long lastChange;
+    private Date lastChange;
 
     @ManyToOne
     @JoinColumn(name = "student")

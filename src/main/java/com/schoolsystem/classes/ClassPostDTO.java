@@ -10,4 +10,8 @@ public class ClassPostDTO {
     private EnumEducationStage enumEducationStage;
     private Long supervisorId;
 
+    public boolean containsEmptyValues() {
+        return name == null || name.isEmpty() || enumEducationStage == null || supervisorId == null;
+    }
+
 }

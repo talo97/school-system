@@ -3,6 +3,7 @@ package com.schoolsystem.user;
 import com.schoolsystem.classes.ClassGetDTO;
 import com.schoolsystem.classes.EntityClass;
 import com.schoolsystem.classes.ServiceClass;
+import com.schoolsystem.mark.MarkGetDTO;
 import com.schoolsystem.parent.EntityParent;
 import com.schoolsystem.parent.ServiceParent;
 import com.schoolsystem.student.EntityStudent;
@@ -12,6 +13,7 @@ import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.teacher.ServiceTeacher;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+//TODO:: edition of all kind of users
 
 @RestController
 @RequestMapping("/api")
@@ -45,10 +49,6 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    private Optional<EntityUser> getCurrentUserFromToken() {
-        return serviceUser.findByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
-    }
-
     private boolean checkIfLoginIsAvailable(String login) {
         return !serviceUser.findByLogin(login).isPresent();
     }
@@ -65,6 +65,23 @@ public class UserController {
     private boolean validatePassword(String password) {
         Matcher matcher = VALID_PASSWORD_REGEX.matcher(password);
         return matcher.matches();
+    }
+
+    public List<StudentGetDTO> mapStudentListToGetDTO(List<EntityStudent> lst){
+        List<StudentGetDTO> studentGetDTOS = new ArrayList<>();
+        lst.forEach(e->{
+            studentGetDTOS.add(mapStudentToGetDTO(e));
+        });
+        return studentGetDTOS;
+    }
+
+    private StudentGetDTO mapStudentToGetDTO(EntityStudent student) {
+        StudentGetDTO temp = modelMapper.map(student.getUsers(), StudentGetDTO.class);
+        temp.setStudentClass(modelMapper.map(student.getStudentClass(), ClassGetDTO.class));
+        temp.getStudentClass().setSupervisor(modelMapper.map(student.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
+        temp.getStudentClass().getSupervisor().setId(student.getStudentClass().getSupervisor().getId());
+        temp.setId(student.getId());
+        return temp;
     }
 
     @PostMapping("/teachers")
@@ -86,12 +103,10 @@ public class UserController {
 
     @GetMapping("/currentUser")
     public ResponseEntity<UserGetDTO> getCurrentUser() {
-        Optional<EntityUser> currentUser = getCurrentUserFromToken();
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         Optional<UserGetDTO> currentUserDTO = Optional.empty();
-        if (currentUser.isPresent()) {
-            currentUserDTO = Optional.of(modelMapper.map(currentUser.get(), UserGetDTO.class));
-            currentUserDTO.get().setUserType(currentUser.get().getUserType());
-        }
+        currentUserDTO = Optional.of(modelMapper.map(currentUser, UserGetDTO.class));
+        currentUserDTO.get().setUserType(currentUser.getUserType());
         return currentUserDTO.map(response -> ResponseEntity.ok().body(response))
                 .orElse(ResponseEntity.badRequest().build());
     }
@@ -129,13 +144,23 @@ public class UserController {
     public ResponseEntity<List<StudentGetDTO>> getStudents() {
         List<StudentGetDTO> lst = new ArrayList<>();
         serviceStudent.getAll().forEach(e -> {
-            StudentGetDTO temp = modelMapper.map(e.getUsers(), StudentGetDTO.class);
-            temp.setEntityClass(modelMapper.map(e.getStudentClass(), ClassGetDTO.class));
-            temp.getEntityClass().setSupervisor(modelMapper.map(e.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
-            temp.setId(e.getId());
-            lst.add(temp);
+            lst.add(mapStudentToGetDTO(e));
         });
         return ResponseEntity.ok(lst);
+    }
+
+    @GetMapping("/students/{id}")
+    @ApiOperation(value = "Returns all students of given class",
+            notes = "Teacher and Admin only operation",
+            response = UserGetDTO.class)
+    public ResponseEntity<?> getStudentsByClass(@Valid @PathVariable Long id) {
+        EntityUser currentUser =  serviceUser.getCurrentUserFromToken().get();
+        if (currentUser.getUserType().equals(EnumUserType.TEACHER) || currentUser.getUserType().equals(EnumUserType.ADMIN)) {
+            return serviceClass.get(id).map(e -> ResponseEntity.ok(mapStudentListToGetDTO(serviceStudent.findAllByStudentClass(e))))
+                    .orElse(ResponseEntity.badRequest().build());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     //XDDDDDDDD plz don't look
@@ -157,8 +182,8 @@ public class UserController {
             dtoToReturn.getParent().setUserType(EnumUserType.TEACHER);
             dtoToReturn.getParent().setId(savedParent.getId());
             dtoToReturn.setStudent(modelMapper.map(savedStudent.getUsers(), StudentGetDTO.class));
-            dtoToReturn.getStudent().setEntityClass(modelMapper.map(savedStudent.getStudentClass(), ClassGetDTO.class));
-            dtoToReturn.getStudent().getEntityClass().setSupervisor(modelMapper.map(savedStudent.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
+            dtoToReturn.getStudent().setStudentClass(modelMapper.map(savedStudent.getStudentClass(), ClassGetDTO.class));
+            dtoToReturn.getStudent().getStudentClass().setSupervisor(modelMapper.map(savedStudent.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
             dtoToReturn.getStudent().setId(savedStudent.getId());
             return ResponseEntity.ok(dtoToReturn);
         } else {

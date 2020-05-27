@@ -47,6 +47,7 @@ public class LessonController {
             temp.setEntityClass(classTemp);
 
             TeacherCourseGetDTO teacherCourseTemp = new TeacherCourseGetDTO();
+            teacherCourseTemp.setId(e.getTeacherCourse().getId());
             teacherCourseTemp.setTeacher(modelMapper.map(e.getTeacherCourse().getTeacher().getUsers(), UserGetDTO.class));
             teacherCourseTemp.setCourse(modelMapper.map(e.getTeacherCourse().getCourse(), CourseGetDTO.class));
             temp.setTeacherCourse(teacherCourseTemp);
@@ -62,14 +63,21 @@ public class LessonController {
 
     @GetMapping("/lessonsClass/{id}")
     public ResponseEntity<List<LessonGetDTO>> getLessons(@Valid @PathVariable Long id) {
-        return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByEntityClassId(id)));
+        return serviceClass.get(id).map(entityClass -> {
+            return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByClass(entityClass)));
+        }).orElse(ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/lessonsTeacher/{id}")
     public ResponseEntity<?> getLessonsTeacher(@Valid @PathVariable Long id) {
-        List<LessonGetDTO> dtoList = new ArrayList<>();
-        serviceTeacher.get(id).ifPresent(e -> dtoList.addAll(mapEntityToGetDTO(serviceLesson.findAllByTeacher(e))));
-        return ResponseEntity.ok().body(dtoList);
+        return serviceTeacher.get(id).map(entityTeacher -> {
+            return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByTeacher(entityTeacher)));
+        }).orElse(ResponseEntity.badRequest().build());
+//
+//
+//        List<LessonGetDTO> dtoList = new ArrayList<>();
+//        serviceTeacher.get(id).ifPresent(e -> dtoList.addAll(mapEntityToGetDTO(serviceLesson.findAllByTeacher(e))));
+//        return ResponseEntity.ok().body(dtoList);
     }
 
 
@@ -98,10 +106,13 @@ public class LessonController {
             TeacherCourseGetDTO teacherCourseTemp = new TeacherCourseGetDTO();
             teacherCourseTemp.setTeacher(modelMapper.map(teacherCourse.getTeacher().getUsers(), UserGetDTO.class));
             teacherCourseTemp.setCourse(modelMapper.map(teacherCourse.getCourse(), CourseGetDTO.class));
+            teacherCourseTemp.setId(teacherCourse.getId());
+            teacherCourseTemp.getTeacher().setId(teacherCourse.getTeacher().getId());
             savedLesson.setTeacherCourse(teacherCourseTemp);
             //class
             ClassGetDTO classTemp = modelMapper.map(entClass, ClassGetDTO.class);
             classTemp.setSupervisor(modelMapper.map(entClass.getSupervisor().getUsers(), UserGetDTO.class));
+            classTemp.getSupervisor().setId(entClass.getSupervisor().getId());
             savedLesson.setEntityClass(classTemp);
 
         }));

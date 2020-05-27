@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeacherCourseGetDTO {
+    private Long id;
     private CourseGetDTO course;
     private UserGetDTO teacher;
 }

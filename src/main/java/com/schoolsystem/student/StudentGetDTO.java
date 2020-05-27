@@ -18,7 +18,7 @@ public class StudentGetDTO {
     private String lastName;
     @ApiModelProperty(value = "Date format: yyyy-mm-dd")
     private Date birthDate;
-    private ClassGetDTO entityClass;
+    private ClassGetDTO studentClass;
     private EnumUserType userType;
 
 }
