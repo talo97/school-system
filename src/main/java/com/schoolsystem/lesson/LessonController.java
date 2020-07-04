@@ -9,6 +9,7 @@ import com.schoolsystem.course.ServiceTeacherCourse;
 import com.schoolsystem.course.TeacherCourseGetDTO;
 import com.schoolsystem.teacher.ServiceTeacher;
 import com.schoolsystem.user.UserGetDTO;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +79,9 @@ public class LessonController {
 //        return ResponseEntity.ok().body(dtoList);
     }
 
-
+    @ApiOperation(value = "Add new lesson record.",
+            notes = "Admin only operation",
+            response = LessonGetDTO.class)
     @PostMapping("/lessons")
     public ResponseEntity<?> addLesson(@Valid @RequestBody LessonPostDTO lessonPostDTO) {
         Optional<EntityClass> entityClass = serviceClass.get(lessonPostDTO.getEntityClassId());

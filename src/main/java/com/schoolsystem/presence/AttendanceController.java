@@ -27,11 +27,7 @@ import java.util.*;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AttendanceController {
-    //TODO::everything xd
-    // Show weekly records to work with less data at once.
-    // 1 - show all presence of current user (only when current user is STUDENT, otherwise 401 error)
-    // 2 - show all presence of given user of given class (only for TEACHER supervisor of given class!),
-    // basically same method as the one above
+    //TODO:: Add teacher substitution.
 
     private SchoolTimeUtil schoolTimeUtil;
     private ServiceUser serviceUser;
