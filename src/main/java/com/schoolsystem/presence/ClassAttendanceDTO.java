@@ -1,5 +1,6 @@
 package com.schoolsystem.presence;
 
+import com.schoolsystem.student.EntityStudent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,13 @@ import java.util.List;
 public class ClassAttendanceDTO {
     private String studentFirstName;
     private String studentLastName;
-    private String studentId;
-    List<UserAttendanceDTO> presences;
+    private Long studentId;
+    List<UserAttendanceDTO> attendanceList;
+
+    ClassAttendanceDTO(EntityStudent student, List<UserAttendanceDTO> attendanceList){
+        this.studentFirstName = student.getUsers().getFirstName();
+        this.studentLastName = student.getUsers().getLastName();
+        this.studentId = student.getId();
+        this.attendanceList = attendanceList;
+    }
 }

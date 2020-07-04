@@ -1,5 +1,7 @@
 package com.schoolsystem.presence;
 
+import com.schoolsystem.classes.EntityClass;
+import com.schoolsystem.classes.ServiceClass;
 import com.schoolsystem.common.Pair;
 import com.schoolsystem.common.SchoolTimeUtil;
 import com.schoolsystem.course.ServiceTeacherCourse;
@@ -9,6 +11,7 @@ import com.schoolsystem.lesson.EnumLessonNumber;
 import com.schoolsystem.lesson.ServiceLesson;
 import com.schoolsystem.student.EntityStudent;
 import com.schoolsystem.student.ServiceStudent;
+import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.user.EntityUser;
 import com.schoolsystem.user.EnumUserType;
 import com.schoolsystem.user.ServiceUser;
@@ -18,9 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -38,14 +39,16 @@ public class AttendanceController {
     private ServiceTeacherCourse serviceTeacherCourse;
     private ServiceStudent serviceStudent;
     private ServicePresence servicePresence;
+    private ServiceClass serviceClass;
 
-    public AttendanceController(SchoolTimeUtil schoolTimeUtil, ServiceUser serviceUser, ServiceLesson serviceLesson, ServiceTeacherCourse serviceTeacherCourse, ServiceStudent serviceStudent, ServicePresence servicePresence) {
+    public AttendanceController(SchoolTimeUtil schoolTimeUtil, ServiceUser serviceUser, ServiceLesson serviceLesson, ServiceTeacherCourse serviceTeacherCourse, ServiceStudent serviceStudent, ServicePresence servicePresence, ServiceClass serviceClass) {
         this.schoolTimeUtil = schoolTimeUtil;
         this.serviceUser = serviceUser;
         this.serviceLesson = serviceLesson;
         this.serviceTeacherCourse = serviceTeacherCourse;
         this.serviceStudent = serviceStudent;
         this.servicePresence = servicePresence;
+        this.serviceClass = serviceClass;
     }
 
     @GetMapping("/dateTest")
@@ -115,14 +118,6 @@ public class AttendanceController {
         }).orElse(ResponseEntity.badRequest().body("Wrong arguments, couldn't find lesson"));
     }
 
-    private List<UserAttendanceDTO> mapPresenceToUserPresenceDTO(List<EntityPresence> presences) {
-        List<UserAttendanceDTO> userAttendanceDTOS = new ArrayList<>();
-        presences.forEach(presence -> {
-            userAttendanceDTOS.add(new UserAttendanceDTO(presence));
-        });
-        return userAttendanceDTOS;
-    }
-
     @ApiOperation(value = "Show current user(student) attendance.",
             notes = "Student only operation",
             response = UserAttendanceDTO.class,
@@ -131,7 +126,7 @@ public class AttendanceController {
     public ResponseEntity<?> getMyAttendance() {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.STUDENT)) {
-            return ResponseEntity.ok().body(mapPresenceToUserPresenceDTO(servicePresence.find(currentUser.getEntityStudent())));
+            return ResponseEntity.ok().body(mapEntityPresenceToUserAttendanceDTO(servicePresence.find(currentUser.getEntityStudent())));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user is not of STUDENT type, this endpoint is for students only.");
         }
@@ -139,10 +134,52 @@ public class AttendanceController {
 
     @ApiOperation(value = "Get attendance of all students of current user(teacher, supervisor only) class.",
             notes = "Teacher(supervisor of class) only operation")
-    // response = UserPresenceDTO.class,
-    // responseContainer = "List")
     @GetMapping("/classAttendance")
-    public ResponseEntity<?> getClassAttendance() {
-        throw new UnsupportedOperationException();
+    public ResponseEntity<List<ClassAttendanceDTO>> getClassAttendance() {
+        //check if current user is teacher
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+        if (currentUser.getUserType().equals(EnumUserType.TEACHER)) {
+            Optional<EntityClass> entityClass = serviceClass.findBySupervisor(currentUser.getEntityTeacher());
+            if (entityClass.isPresent()) {
+                Map<EntityStudent, List<UserAttendanceDTO>> mapStudentAttendance = prepareMapStudentAttendance(entityClass.get());
+                return ResponseEntity.ok(mapEntityPresenceToClassAttendanceDTO(mapStudentAttendance));
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Method prepares map of students and their attendance. Used for simplifying DTO object creation.
+     *
+     * @param entityClass - supervisor of class
+     * @return Map
+     */
+    private Map<EntityStudent, List<UserAttendanceDTO>> prepareMapStudentAttendance(EntityClass entityClass) {
+        Map<EntityStudent, List<UserAttendanceDTO>> mapStudentAttendance = new HashMap<>();
+        List<EntityStudent> students = serviceStudent.findAllByStudentClass(entityClass);
+        students.forEach(student -> {
+            List<EntityPresence> presences = servicePresence.find(student);
+            mapStudentAttendance.put(student, mapEntityPresenceToUserAttendanceDTO(presences));
+        });
+        return mapStudentAttendance;
+    }
+
+    private List<UserAttendanceDTO> mapEntityPresenceToUserAttendanceDTO(List<EntityPresence> presences) {
+        List<UserAttendanceDTO> userAttendanceDTOS = new ArrayList<>();
+        presences.forEach(presence -> {
+            userAttendanceDTOS.add(new UserAttendanceDTO(presence));
+        });
+        return userAttendanceDTOS;
+    }
+
+    private List<ClassAttendanceDTO> mapEntityPresenceToClassAttendanceDTO(Map<EntityStudent, List<UserAttendanceDTO>> mapStudentAttendance) {
+        List<ClassAttendanceDTO> userAttendanceDTOS = new ArrayList<>();
+        mapStudentAttendance.forEach((student, attendanceList) -> {
+            userAttendanceDTOS.add(new ClassAttendanceDTO(student, attendanceList));
+        });
+        return userAttendanceDTOS;
     }
 }
