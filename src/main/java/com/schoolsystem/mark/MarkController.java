@@ -47,7 +47,8 @@ public class MarkController {
     @GetMapping("/myMarks")
     @ApiOperation(value = "Show current student marks (by JWT token)",
             notes = "Student only operation",
-            response = TeacherCourseMarksGetDTO.class)
+            response = TeacherCourseMarksGetDTO.class,
+            responseContainer = "List")
     public ResponseEntity<?> getMarks() {
         EntityUser user = serviceUser.getCurrentUserFromToken().get();
         if (user.getUserType().equals(EnumUserType.STUDENT)) {
@@ -79,7 +80,9 @@ public class MarkController {
 
     @GetMapping("/marks/{classId}/{teacherCourseId}")
     @ApiOperation(value = "Show all students marks from given class and given course",
-            notes = "Endpoint available only for teacher of given class and subject")
+            notes = "Endpoint available only for teacher of given class and subject",
+            response = StudentMarksGetDTO.class,
+            responseContainer = "List")
     public ResponseEntity<?> getMarksByClassAndCourse(@Valid @PathVariable Long classId, @Valid @PathVariable Long teacherCourseId) {
         return serviceClass.get(classId).flatMap(entityClass -> serviceTeacherCourse.get(teacherCourseId).map(teacherCourse -> {
             EntityUser currentUser = serviceUser.getCurrentUserFromToken().get(); //user exist coz otherwise this endpoint would be unavailable, no check required.

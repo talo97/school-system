@@ -123,7 +123,9 @@ public class CourseController {
         return ResponseEntity.ok(savedTeacherCourse);
     }
 
-    @ApiOperation(value = "Get all teacher-courses connections")
+    @ApiOperation(value = "Get all teacher-courses connections",
+            response = TeacherCourseGetDTO.class,
+            responseContainer = "List")
     @GetMapping("/teacherCourses")
     public ResponseEntity<?> getAllTeacherCourses() {
         List<TeacherCourseGetDTO> dtoList = new ArrayList<>();
@@ -135,7 +137,9 @@ public class CourseController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @ApiOperation(value = "Get all teacher-courses of given class by Id")
+    @ApiOperation(value = "Get all teacher-courses of given class by Id",
+            response = TeacherCourseGetDTO.class,
+            responseContainer = "List")
     @GetMapping("/teacherCourses/{classId}")
     public ResponseEntity<?> getAllTeacherCourses(@Valid @PathVariable Long classId) {
         return serviceClass.get(classId).map(entityClass -> {
@@ -150,7 +154,8 @@ public class CourseController {
     @GetMapping("/myCourses")
     @ApiOperation(value = "Returns list of courses of current user(teacher).",
             notes = "Teacher only operation.",
-            response = CourseGetDTO.class)
+            response = TeacherCourseGetDTO.class,
+            responseContainer = "List")
     public ResponseEntity<?> getCurrentTeacherCourses() {
         EntityUser entityUser = serviceUser.getCurrentUserFromToken().get();
         if (entityUser.getUserType().equals(EnumUserType.TEACHER)) {
@@ -167,7 +172,9 @@ public class CourseController {
     //TODO:: maybe will return duplicates values dunno, have to test
     @GetMapping("/myCourses/{classId}")
     @ApiOperation(value = "Returns list of courses of current user(teacher) for given class",
-            notes = "Teacher only operation.")
+            notes = "Teacher only operation.",
+            response = TeacherCourseGetDTO.class,
+            responseContainer = "List")
     public ResponseEntity<?> getCurrentTeacherCourses(@Valid @PathVariable Long classId) {
         EntityUser entityUser = serviceUser.getCurrentUserFromToken().get();
         if (entityUser.getUserType().equals(EnumUserType.TEACHER)) {

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "presence")
@@ -18,10 +19,10 @@ public class EntityPresence extends CommonEntity {
     private Boolean wasPresent;
 
     @Column(name = "description")
-    private String description;
+    private String description = "";
 
     @Column(name = "date")
-    private long date;
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "student")

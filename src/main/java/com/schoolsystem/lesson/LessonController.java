@@ -69,10 +69,8 @@ public class LessonController {
     }
 
     @GetMapping("/lessonsTeacher/{id}")
-    public ResponseEntity<?> getLessonsTeacher(@Valid @PathVariable Long id) {
-        return serviceTeacher.get(id).map(entityTeacher -> {
-            return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByTeacher(entityTeacher)));
-        }).orElse(ResponseEntity.badRequest().build());
+    public ResponseEntity<List<LessonGetDTO>> getLessonsTeacher(@Valid @PathVariable Long id) {
+        return serviceTeacher.get(id).map(entityTeacher -> ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByTeacher(entityTeacher)))).orElse(ResponseEntity.badRequest().build());
 //
 //
 //        List<LessonGetDTO> dtoList = new ArrayList<>();

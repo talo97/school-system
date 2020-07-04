@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             // other public endpoints of your API may be appended to this array
             "/api/authenticate",
+            "/api/dateTest"
     };
 
     public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter) {

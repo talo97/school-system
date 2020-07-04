@@ -22,4 +22,6 @@ public interface DaoLesson extends JpaRepository<EntityLesson, Long> {
     Optional<EntityLesson> findByDayOfWeekAndLessonNumberAndEntityClassIdAndActiveIsTrue(EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber, Long entityClassId);
 
     Optional<EntityLesson> findByTeacherCourseAndDayOfWeekAndLessonNumberAndActiveIsTrue(EntityTeacherCourse teacherCourse, EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber);
+
+    Optional<EntityLesson> findByTeacherCourseInAndDayOfWeekAndLessonNumberAndActiveIsTrue(List<EntityTeacherCourse> teacherCourses, EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber);
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,5 +75,10 @@ public class ServiceLessonImpl extends CommonServiceImpl<EntityLesson, DaoLesson
     public List<EntityTeacherCourse> findDistinctTeacherCoursesOfGivenClass(EntityClass entityClass) {
         return repository.findAllByEntityClassAndActiveIsTrue(entityClass).
                 stream().map(EntityLesson::getTeacherCourse).distinct().collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<EntityLesson> find(List<EntityTeacherCourse> teacherCourses, EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber) {
+        return repository.findByTeacherCourseInAndDayOfWeekAndLessonNumberAndActiveIsTrue(teacherCourses, dayOfWeek, lessonNumber);
     }
 }

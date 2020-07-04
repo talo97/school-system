@@ -6,6 +6,7 @@ import com.schoolsystem.course.EntityTeacherCourse;
 import com.schoolsystem.teacher.EntityTeacher;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ServiceLesson extends CommonService<EntityLesson> {
     List<EntityLesson> findAllByClass(EntityClass entityClass);
@@ -23,4 +24,6 @@ public interface ServiceLesson extends CommonService<EntityLesson> {
     List<EntityLesson> findAllActive();
 
     List<EntityTeacherCourse> findDistinctTeacherCoursesOfGivenClass(EntityClass entityClass);
+
+    Optional<EntityLesson> find(List<EntityTeacherCourse> teacherCourses,EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber);
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "substitution")
@@ -14,7 +15,7 @@ import javax.persistence.*;
 public class EntitySubstitution extends CommonEntity {
 
     @Column(name = "date")
-    private long date;
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "planned_lesson")

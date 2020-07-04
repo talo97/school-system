@@ -50,10 +50,10 @@ public class ClassController {
         } else {
             Optional<EntityTeacher> teacher = serviceTeacher.get(classPostDTO.getSupervisorId());
             if (teacher.isPresent()) {
-                if (!serviceClass.findBySupervisor(teacher.get()).isPresent()){
-                return serviceClass.save(classPostDTO).map(response -> ResponseEntity.ok().body(classPostDTO))
-                        .orElse(ResponseEntity.badRequest().build());
-                }else{
+                if (!serviceClass.findBySupervisor(teacher.get()).isPresent()) {
+                    return serviceClass.save(classPostDTO).map(response -> ResponseEntity.ok().body(classPostDTO))
+                            .orElse(ResponseEntity.badRequest().build());
+                } else {
                     return ResponseEntity.badRequest().body("Teacher has already class");
                 }
             } else {
@@ -62,6 +62,9 @@ public class ClassController {
         }
     }
 
+    @ApiOperation(value = "Return list of all classes",
+            response = ClassGetDTO.class,
+            responseContainer = "List")
     @GetMapping("/classes")
     public ResponseEntity<?> getAllClasses() {
         return ResponseEntity.ok().body(mapEntityListToDTO(serviceClass.getAll()));
@@ -70,7 +73,8 @@ public class ClassController {
     @GetMapping("/teacherClasses")
     @ApiOperation(value = "Returns list of distinct classes that current teacher teaches.",
             notes = "Teacher only operation.",
-            response = ClassGetDTO.class)
+            response = ClassGetDTO.class,
+            responseContainer = "List")
     public ResponseEntity<?> getTeacherClasses() {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.TEACHER)) {
@@ -82,7 +86,8 @@ public class ClassController {
 
     @GetMapping("/isSupervisor")
     @ApiOperation(value = "Returns true if current user is supervisor of class or false otherwise",
-            notes = "Teacher only operation")
+            notes = "Teacher only operation",
+            response = Boolean.class)
     public ResponseEntity<?> isSupervisor() {
         return serviceUser.getCurrentUserFromToken().map(entityUser -> {
             if (entityUser.getUserType().equals(EnumUserType.TEACHER)) {
@@ -95,7 +100,8 @@ public class ClassController {
 
     @GetMapping("/supervisorClass")
     @ApiOperation(value = "Returns class that current user is supervisor of.",
-            notes = "Teacher only operation")
+            notes = "Teacher only operation",
+            response = ClassGetDTO.class)
     public ResponseEntity<?> getSupervisorClass() {
         return serviceUser.getCurrentUserFromToken().map(entityUser -> {
             if (entityUser.getUserType().equals(EnumUserType.TEACHER)) {
