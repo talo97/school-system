@@ -11,9 +11,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPresenceDTO {
+public class UserAttendanceDTO {
     private EnumDayOfWeek dayOfWeek;
     private EnumLessonNumber lessonNumber;
     private Boolean wasPresent;
     private String courseName;
+
+    UserAttendanceDTO(EntityPresence presence) {
+        this.dayOfWeek = presence.getLesson().getDayOfWeek();
+        this.lessonNumber = presence.getLesson().getLessonNumber();
+        this.wasPresent = presence.getWasPresent();
+        this.courseName = presence.getLesson().getTeacherCourse().getCourse().getName();
+    }
 }

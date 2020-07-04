@@ -11,28 +11,28 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LessonPresenceDTO {
-    private List<StudentPresenceDTO> students;
+public class LessonAttendanceDTO {
+    private List<StudentAttendanceDTO> students;
     private Long lessonId;
 
-    LessonPresenceDTO(List<EntityStudent> students, Long lessonId) {
+    LessonAttendanceDTO(List<EntityStudent> students, Long lessonId) {
         this.lessonId = lessonId;
         this.students = new ArrayList<>();
         students.forEach(e -> {
-            this.students.add(new StudentPresenceDTO(e.getId(), e.getUsers().getFirstName(), e.getUsers().getLastName(), false));
+            this.students.add(new StudentAttendanceDTO(e.getId(), e.getUsers().getFirstName(), e.getUsers().getLastName(), false));
         });
     }
 
-    public LessonPresenceDTO(List<EntityPresence> presences) {
+    public LessonAttendanceDTO(List<EntityPresence> presences) {
         this.students = new ArrayList<>();
         if (presences.size() > 0) {
             this.lessonId = presences.get(0).getLesson().getId();
         }
         presences.forEach(entityPresence -> {
             EntityStudent student = entityPresence.getStudent(); //temp value for cleaner code
-            StudentPresenceDTO studentPresenceDTO = new StudentPresenceDTO(student.getId(),student.getUsers().getFirstName(),
+            StudentAttendanceDTO studentAttendanceDTO = new StudentAttendanceDTO(student.getId(),student.getUsers().getFirstName(),
                     student.getUsers().getLastName(),entityPresence.getWasPresent());
-            students.add(studentPresenceDTO);
+            students.add(studentAttendanceDTO);
         });
     }
 }

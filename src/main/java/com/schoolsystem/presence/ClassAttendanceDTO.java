@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentPresenceDTO {
-    private Long studentId;
+public class ClassAttendanceDTO {
     private String studentFirstName;
     private String studentLastName;
-    private Boolean isPresent;
+    private String studentId;
+    List<UserAttendanceDTO> presences;
 }

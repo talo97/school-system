@@ -25,7 +25,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
-public class PresenceController {
+public class AttendanceController {
     //TODO::everything xd
     // Show weekly records to work with less data at once.
     // 1 - show all presence of current user (only when current user is STUDENT, otherwise 401 error)
@@ -39,7 +39,7 @@ public class PresenceController {
     private ServiceStudent serviceStudent;
     private ServicePresence servicePresence;
 
-    public PresenceController(SchoolTimeUtil schoolTimeUtil, ServiceUser serviceUser, ServiceLesson serviceLesson, ServiceTeacherCourse serviceTeacherCourse, ServiceStudent serviceStudent, ServicePresence servicePresence) {
+    public AttendanceController(SchoolTimeUtil schoolTimeUtil, ServiceUser serviceUser, ServiceLesson serviceLesson, ServiceTeacherCourse serviceTeacherCourse, ServiceStudent serviceStudent, ServicePresence servicePresence) {
         this.schoolTimeUtil = schoolTimeUtil;
         this.serviceUser = serviceUser;
         this.serviceLesson = serviceLesson;
@@ -58,9 +58,9 @@ public class PresenceController {
 
     //TODO::check if there is already record for presence in that day/lesson/class so that we won't repeat it
     @ApiOperation(value = "By current system time check if user(teacher) has any lessons, if so returns list of students of that lesson and lessonId",
-            notes = "Teacher only operation, works on system time. Helper endpoint used before assigning presence for given lesson.",
-            response = LessonPresenceDTO.class)
-    @GetMapping("/presenceInit")
+            notes = "Teacher only operation, works on system time. Helper endpoint used before assigning attendance for given lesson.",
+            response = LessonAttendanceDTO.class)
+    @GetMapping("/attendanceInit")
     public ResponseEntity<?> getCurrentLessonStudents() {
         Optional<EnumDayOfWeek> dayOfWeek = schoolTimeUtil.getCurrentDayOfWeek();
         Optional<EnumLessonNumber> lessonNumber = schoolTimeUtil.getLessonNumberByLocalDateTime();
@@ -80,34 +80,34 @@ public class PresenceController {
                 //if there are any record that means teacher did already presence, so return values that he passed
                 if (presences.isEmpty()) {
                     List<EntityStudent> students = serviceStudent.findAllByStudentClass(lessonOptional.get().getEntityClass());
-                    return ResponseEntity.ok().body(new LessonPresenceDTO(students, lessonOptional.get().getId()));
+                    return ResponseEntity.ok().body(new LessonAttendanceDTO(students, lessonOptional.get().getId()));
                 }
-                return ResponseEntity.ok(new LessonPresenceDTO(presences));
+                return ResponseEntity.ok(new LessonAttendanceDTO(presences));
             } else {
                 return ResponseEntity.badRequest().body("No Lessons for given teacher in current time");
             }
         })).orElse(ResponseEntity.badRequest().body("It is free time, no lessons occur in that time."));
     }
 
-    @ApiOperation(value = "Add presence for given lesson in given time, before that use /api/presenceInit endpoint to get current lesson")
-    @PostMapping("/presence")
-    public ResponseEntity<?> addPresence(@Valid @RequestBody LessonPresenceDTO lessonPresenceDTO) {
+    @ApiOperation(value = "Add attendance for given lesson in given time, before that use /api/presenceInit endpoint to get current lesson")
+    @PostMapping("/attendance")
+    public ResponseEntity<?> addAttendance(@Valid @RequestBody LessonAttendanceDTO lessonAttendanceDTO) {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get(); //kozak nie? taki warning spoko
-        Optional<EntityLesson> lessonOptional = serviceLesson.get(lessonPresenceDTO.getLessonId());
+        Optional<EntityLesson> lessonOptional = serviceLesson.get(lessonAttendanceDTO.getLessonId());
         return lessonOptional.map(entityLesson -> {
             //TODO::delete maybe
             if (!entityLesson.getTeacherCourse().getTeacher().getId().equals(currentUser.getEntityTeacher().getId())) {
                 return ResponseEntity.badRequest().body("Teacher is not responsible for given lesson");
             }
             List<Pair<Boolean, EntityStudent>> studentsPresence = new ArrayList<>();
-            lessonPresenceDTO.getStudents().forEach(studentPresenceDTO -> {
+            lessonAttendanceDTO.getStudents().forEach(studentPresenceDTO -> {
                 Optional<EntityStudent> entityStudent = serviceStudent.get(studentPresenceDTO.getStudentId());
                 entityStudent.ifPresent(student -> {
                     studentsPresence.add(Pair.of(studentPresenceDTO.getIsPresent(), student));
                 });
             });
             //TODO::delete maybe
-            if (lessonPresenceDTO.getStudents().size() != studentsPresence.size()) {
+            if (lessonAttendanceDTO.getStudents().size() != studentsPresence.size()) {
                 return ResponseEntity.badRequest().body("Some students ID were not existent");
             }
             servicePresence.saveOrUpdateAll(studentsPresence, entityLesson);
@@ -115,17 +115,34 @@ public class PresenceController {
         }).orElse(ResponseEntity.badRequest().body("Wrong arguments, couldn't find lesson"));
     }
 
-    @ApiOperation(value = "Show current user(student) presence.",
+    private List<UserAttendanceDTO> mapPresenceToUserPresenceDTO(List<EntityPresence> presences) {
+        List<UserAttendanceDTO> userAttendanceDTOS = new ArrayList<>();
+        presences.forEach(presence -> {
+            userAttendanceDTOS.add(new UserAttendanceDTO(presence));
+        });
+        return userAttendanceDTOS;
+    }
+
+    @ApiOperation(value = "Show current user(student) attendance.",
             notes = "Student only operation",
-            response = UserPresenceDTO.class,
+            response = UserAttendanceDTO.class,
             responseContainer = "List")
-    @GetMapping("/myPresence")
-    public ResponseEntity<?> getMyPresence() {
+    @GetMapping("/myAttendance")
+    public ResponseEntity<?> getMyAttendance() {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.STUDENT)) {
-            return ResponseEntity.ok().body("Jeszcze nie zrobione xd");
+            return ResponseEntity.ok().body(mapPresenceToUserPresenceDTO(servicePresence.find(currentUser.getEntityStudent())));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user is not of STUDENT type, this endpoint is for students only.");
         }
+    }
+
+    @ApiOperation(value = "Get attendance of all students of current user(teacher, supervisor only) class.",
+            notes = "Teacher(supervisor of class) only operation")
+    // response = UserPresenceDTO.class,
+    // responseContainer = "List")
+    @GetMapping("/classAttendance")
+    public ResponseEntity<?> getClassAttendance() {
+        throw new UnsupportedOperationException();
     }
 }
