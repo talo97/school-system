@@ -50,6 +50,7 @@ public class LessonController {
             TeacherCourseGetDTO teacherCourseTemp = new TeacherCourseGetDTO();
             teacherCourseTemp.setId(e.getTeacherCourse().getId());
             teacherCourseTemp.setTeacher(modelMapper.map(e.getTeacherCourse().getTeacher().getUsers(), UserGetDTO.class));
+            teacherCourseTemp.getTeacher().setId(e.getTeacherCourse().getTeacher().getId());
             teacherCourseTemp.setCourse(modelMapper.map(e.getTeacherCourse().getCourse(), CourseGetDTO.class));
             temp.setTeacherCourse(teacherCourseTemp);
             dtoList.add(temp);
