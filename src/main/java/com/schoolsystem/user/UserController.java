@@ -107,6 +107,19 @@ public class UserController {
         Optional<UserGetDTO> currentUserDTO = Optional.empty();
         currentUserDTO = Optional.of(modelMapper.map(currentUser, UserGetDTO.class));
         currentUserDTO.get().setUserType(currentUser.getUserType());
+        switch(currentUser.getUserType()){
+            case TEACHER:
+                currentUserDTO.get().setId(currentUser.getEntityTeacher().getId());
+                break;
+            case STUDENT:
+                currentUserDTO.get().setId(currentUser.getEntityStudent().getId());
+                break;
+            case PARENT:
+                currentUserDTO.get().setId(currentUser.getEntityParent().getId());
+                break;
+            default:
+                break;
+        }
         return currentUserDTO.map(response -> ResponseEntity.ok().body(response))
                 .orElse(ResponseEntity.badRequest().build());
     }
