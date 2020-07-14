@@ -79,7 +79,8 @@ public class AttendanceController {
                 //if there are any record that means teacher did already presence, so return values that he passed
                 if (presences.isEmpty()) {
                     List<EntityStudent> students = serviceStudent.findAllByStudentClass(lessonOptional.get().getEntityClass());
-                    return ResponseEntity.ok().body(new LessonAttendanceDTO(students, lessonOptional.get().getId()));
+                    return ResponseEntity.ok().body(new LessonAttendanceDTO(students, lessonOptional.get().getId(),
+                            lessonOptional.get().getTeacherCourse().getCourse().getName()));
                 }
                 return ResponseEntity.ok(new LessonAttendanceDTO(presences));
             } else {
