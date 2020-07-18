@@ -113,9 +113,11 @@ public class UserController {
                 break;
             case STUDENT:
                 currentUserDTO.get().setId(currentUser.getEntityStudent().getId());
+                currentUserDTO.get().setClassId(currentUser.getEntityStudent().getStudentClass().getId());
                 break;
             case PARENT:
                 currentUserDTO.get().setId(currentUser.getEntityParent().getId());
+                currentUserDTO.get().setClassId(currentUser.getEntityParent().getEntityStudent().getStudentClass().getId());
                 break;
             default:
                 break;
@@ -148,6 +150,7 @@ public class UserController {
         serviceParent.getAll().forEach(e -> {
             UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
             temp.setId(e.getId());
+            temp.setClassId(e.getEntityStudent().getStudentClass().getId());
             lst.add(temp);
         });
         return ResponseEntity.ok(lst);

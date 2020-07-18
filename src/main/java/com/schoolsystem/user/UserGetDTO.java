@@ -16,4 +16,5 @@ public class UserGetDTO {
     @ApiModelProperty(value = "Date format: yyyy-mm-dd")
     private Date birthDate;
     private EnumUserType userType;
+    private Long classId = 0L;
 }
