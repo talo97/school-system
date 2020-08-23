@@ -19,5 +19,4 @@ public class SchoolSystemApplication {
         // Setting Spring Boot SetTimeZone
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Warsaw"));
     }
-
 }

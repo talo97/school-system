@@ -67,9 +67,9 @@ public class UserController {
         return matcher.matches();
     }
 
-    public List<StudentGetDTO> mapStudentListToGetDTO(List<EntityStudent> lst){
+    public List<StudentGetDTO> mapStudentListToGetDTO(List<EntityStudent> lst) {
         List<StudentGetDTO> studentGetDTOS = new ArrayList<>();
-        lst.forEach(e->{
+        lst.forEach(e -> {
             studentGetDTOS.add(mapStudentToGetDTO(e));
         });
         return studentGetDTOS;
@@ -107,7 +107,7 @@ public class UserController {
         Optional<UserGetDTO> currentUserDTO = Optional.empty();
         currentUserDTO = Optional.of(modelMapper.map(currentUser, UserGetDTO.class));
         currentUserDTO.get().setUserType(currentUser.getUserType());
-        switch(currentUser.getUserType()){
+        switch (currentUser.getUserType()) {
             case TEACHER:
                 currentUserDTO.get().setId(currentUser.getEntityTeacher().getId());
                 break;
@@ -124,6 +124,18 @@ public class UserController {
         }
         return currentUserDTO.map(response -> ResponseEntity.ok().body(response))
                 .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody PasswordChangeDTO passwordChangeDTO) {
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+        if (passwordChangeDTO.getOldPassword().equals(currentUser.getPassword()) && validatePassword(passwordChangeDTO.getNewPassword())) {
+            currentUser.setPassword(passwordChangeDTO.getNewPassword());
+            serviceUser.update(currentUser);
+            return ResponseEntity.ok("password changed");
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping(value = "/loginAvailable")
@@ -170,7 +182,7 @@ public class UserController {
             notes = "Teacher and Admin only operation",
             response = UserGetDTO.class)
     public ResponseEntity<?> getStudentsByClass(@Valid @PathVariable Long id) {
-        EntityUser currentUser =  serviceUser.getCurrentUserFromToken().get();
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.TEACHER) || currentUser.getUserType().equals(EnumUserType.ADMIN)) {
             return serviceClass.get(id).map(e -> ResponseEntity.ok(mapStudentListToGetDTO(serviceStudent.findAllByStudentClass(e))))
                     .orElse(ResponseEntity.badRequest().build());
