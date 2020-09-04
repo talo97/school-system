@@ -107,6 +107,23 @@ public class MarkController {
 
     }
 
+    @DeleteMapping("/marks/{markId}")
+    @ApiOperation(value = "Delete mark by ID",
+     notes = "Teacher only operation. Works only for assigned teachers.")
+    public ResponseEntity<?> deleteMark(@Valid @PathVariable Long markId){
+        return serviceMark.get(markId).map(entityMark -> {
+            EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+            if (currentUser.getUserType().equals(EnumUserType.TEACHER)
+                    && entityMark.getTeacherCourse().getTeacher().getId().equals(currentUser.getEntityTeacher().getId())) {
+                //teacher and owner of the mark
+                serviceMark.delete(entityMark);
+                return ResponseEntity.ok("Deleted successfully");
+            }else{
+                return ResponseEntity.badRequest().body(("Current user is not responsible for this course."));
+            }
+        }).orElse(ResponseEntity.badRequest().body("Mark of given ID doesn't exist"));
+    }
+
 
     @PostMapping("/marks")
     @ApiOperation(value = "Add mark to given student",
