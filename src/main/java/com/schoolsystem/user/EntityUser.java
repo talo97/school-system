@@ -1,7 +1,6 @@
 package com.schoolsystem.user;
 
 import com.schoolsystem.common.CommonEntity;
-import com.schoolsystem.common.EnumUserGroup;
 import com.schoolsystem.parent.EntityParent;
 import com.schoolsystem.student.EntityStudent;
 import com.schoolsystem.teacher.EntityTeacher;

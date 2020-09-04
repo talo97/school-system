@@ -7,39 +7,39 @@ import java.util.Optional;
 
 public abstract class CommonServiceImpl<E extends CommonEntity, R extends JpaRepository<E, Long>> implements CommonService<E> {
 
-    protected R repository;
+    protected final R repository;
 
     public CommonServiceImpl(R repository) {
         this.repository = repository;
     }
 
     @Override
-    public E save(E entity) {
+    public final E save(E entity) {
         return repository.save(entity);
     }
 
     @Override
-    public E update(E entity) {
+    public final E update(E entity) {
         return repository.saveAndFlush(entity);
     }
 
     @Override
-    public Optional<E> get(Long id) {
+    public final Optional<E> get(Long id) {
         return repository.findById(id);
     }
 
     @Override
-    public List<E> getAll() {
+    public final List<E> getAll() {
         return repository.findAll();
     }
 
     @Override
-    public void delete(Long id) {
+    public final void delete(Long id) {
         repository.deleteById(id);
     }
 
     @Override
-    public void delete(E entityGroup) {
+    public final void delete(E entityGroup) {
         repository.delete(entityGroup);
     }
 }

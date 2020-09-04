@@ -18,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +28,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class MarkController {
+    //TODO:: PUT mark(edition plzzzzz)
+
 
     private final ServiceMark serviceMark;
     private final ServiceUser serviceUser;
@@ -58,26 +63,6 @@ public class MarkController {
         }
     }
 
-    //TODO:: change for more specific with /classId/courseId, or prepare DTO object with Course -> studentlist/markslist
-//    @GetMapping("/classMarks/{id}")
-//    @ApiOperation(value = "Show all marks from all subjects of given by ID class",
-//            notes = "Supervisor only operation. For supervisor of given class",
-//            response = MarkGetDTO.class)
-//    public ResponseEntity<?> getClassMarks(@Valid @PathVariable Long id) {
-//        EntityUser user = serviceUser.getCurrentUserFromToken().get();
-//        return serviceClass.get(id).map(entityClass -> {
-//            if (user.getUserType().equals(EnumUserType.TEACHER) && user.getEntityTeacher().getId().equals(entityClass.getSupervisor().getId())) {
-//                modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-//                List<MarkGetDTO> lst = modelMapper.map(serviceMark.findAllByClass(entityClass), new TypeToken<List<MarkGetDTO>>() {
-//                }.getType());
-//                modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-//                return ResponseEntity.ok(lst);
-//            } else {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user is not supervisor of given class");
-//            }
-//        }).orElse(ResponseEntity.badRequest().body("There is no class with given ID"));
-//    }
-
     @GetMapping("/marks/{classId}/{teacherCourseId}")
     @ApiOperation(value = "Show all students marks from given class and given course",
             notes = "Endpoint available only for teacher of given class and subject",
@@ -95,6 +80,33 @@ public class MarkController {
             }
         })).orElse(ResponseEntity.badRequest().body("Wrong class or teacherCourse Id"));
     }
+
+    @PutMapping("/marks/{markId}")
+    @ApiOperation(value = "Edit mark given by ID",
+            notes = "Teacher only operation. Works only for assigned teachers.")
+    public ResponseEntity<?> editMark(@Valid @RequestBody MarkPutDTO markEdit, @Valid @PathVariable Long markId) {
+        if (markEdit.containsEmptyValue()) {
+            return ResponseEntity.badRequest().body("Request body contains empty values");
+        }
+        return serviceMark.get(markId).map(entityMark -> {
+            EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+            if (currentUser.getUserType().equals(EnumUserType.TEACHER)
+                    && entityMark.getTeacherCourse().getTeacher().getId().equals(currentUser.getEntityTeacher().getId())) {
+                entityMark.setEnumGrade(markEdit.getEnumGrade());
+                LocalDateTime dateTime = LocalDateTime.now(ZoneId.systemDefault());
+                ZoneId newZone = ZoneId.of("Europe/Warsaw");
+                LocalDateTime newTime = dateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(newZone).toLocalDateTime();
+                entityMark.setLastChange(Date.valueOf(newTime.toLocalDate()));
+                entityMark.setDescription(markEdit.getDescription());
+                MarkShortGetDTO toReturn = new MarkShortGetDTO(serviceMark.save(entityMark).getId(), entityMark.getEnumGrade(), entityMark.getDescription(), entityMark.getLastChange());
+                return ResponseEntity.ok(toReturn);
+            }else{
+            return ResponseEntity.badRequest().body("Current user is not responsible for this course.");
+            }
+        }).orElse(ResponseEntity.badRequest().body("Mark of given ID doesn't exist"));
+
+    }
+
 
     @PostMapping("/marks")
     @ApiOperation(value = "Add mark to given student",
