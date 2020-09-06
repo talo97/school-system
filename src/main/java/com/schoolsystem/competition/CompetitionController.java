@@ -6,6 +6,7 @@ import com.schoolsystem.teacher.ServiceTeacher;
 import com.schoolsystem.user.EntityUser;
 import com.schoolsystem.user.EnumUserType;
 import com.schoolsystem.user.ServiceUser;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -102,6 +103,29 @@ public class CompetitionController {
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @DeleteMapping("/competitionParticipation/{competitionParticipationId}")
+    @ApiOperation(value = "Deassign student from competition",
+            notes = "Operation for teacher only!")
+    public ResponseEntity<?> deleteStudentFromCompetition(@Valid @PathVariable Long competitionParticipationId){
+        EntityUser teacherUser = serviceUser.getCurrentUserFromToken().get();
+        Optional<EntityCompetitionParticipation> competitionParticipation = serviceCompetitionParticipation.get(competitionParticipationId);
+        if(teacherUser.getUserType() == EnumUserType.TEACHER && competitionParticipation.isPresent()){
+            serviceCompetitionParticipation.delete(competitionParticipation.get());
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/competitionParticipation/{competitionId}")
+    @ApiOperation(value = "Return all student-competition assignments for given competition",
+            notes = "Operation for authenticated user",
+            response = CompetitionParticipationGetDTO.class,
+            responseContainer = "List")
+    public ResponseEntity<List<CompetitionParticipationGetDTO>>getStudentsCompetition(@Valid @PathVariable Long competitionId){
+        return ResponseEntity.ok(convertCompetitionParticipationToDTOList(serviceCompetitionParticipation.findAllByCompetitionId(competitionId)));
     }
 
     private List<CompetitionParticipationGetDTO> convertCompetitionParticipationToDTOList(List<EntityCompetitionParticipation> competitionParticipations) {

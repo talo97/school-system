@@ -11,5 +11,5 @@ import java.util.List;
 public interface DaoCompetitionParticipation extends JpaRepository<EntityCompetitionParticipation, Long> {
     List<EntityCompetitionParticipation> findAllByStudent(EntityStudent student);
     List<EntityCompetitionParticipation> findAllByTeacher(EntityTeacher teacher);
-
+    List<EntityCompetitionParticipation> findAllByCompetitionId(Long competitionId);
 }

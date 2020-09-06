@@ -10,4 +10,5 @@ import java.util.List;
 public interface ServiceCompetitionParticipation extends CommonService<EntityCompetitionParticipation>{
     List<EntityCompetitionParticipation> findAllByStudent(EntityStudent student);
     List<EntityCompetitionParticipation> findAllByTeacher(EntityTeacher teacher);
+    List<EntityCompetitionParticipation> findAllByCompetitionId(Long competitionId);
 }

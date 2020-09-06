@@ -22,4 +22,9 @@ public class ServiceCompetitionParticipationImpl extends CommonServiceImpl<Entit
     public List<EntityCompetitionParticipation> findAllByTeacher(EntityTeacher teacher) {
         return repository.findAllByTeacher(teacher);
     }
+
+    @Override
+    public List<EntityCompetitionParticipation> findAllByCompetitionId(Long competitionId) {
+        return repository.findAllByCompetitionId(competitionId);
+    }
 }
