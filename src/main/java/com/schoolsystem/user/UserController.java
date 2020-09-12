@@ -81,6 +81,7 @@ public class UserController {
         temp.getStudentClass().setSupervisor(modelMapper.map(student.getStudentClass().getSupervisor().getUsers(), UserGetDTO.class));
         temp.getStudentClass().getSupervisor().setId(student.getStudentClass().getSupervisor().getId());
         temp.setId(student.getId());
+        temp.setUserId(student.getUsers().getId());
         return temp;
     }
 
@@ -107,6 +108,7 @@ public class UserController {
         Optional<UserGetDTO> currentUserDTO = Optional.empty();
         currentUserDTO = Optional.of(modelMapper.map(currentUser, UserGetDTO.class));
         currentUserDTO.get().setUserType(currentUser.getUserType());
+        currentUserDTO.get().setUserId(currentUser.getId());
         switch (currentUser.getUserType()) {
             case TEACHER:
                 currentUserDTO.get().setId(currentUser.getEntityTeacher().getId());
@@ -151,6 +153,7 @@ public class UserController {
         serviceTeacher.getAll().forEach(e -> {
             UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
             temp.setId(e.getId());
+            temp.setUserId(e.getUsers().getId());
             lst.add(temp);
         });
         return ResponseEntity.ok(lst);
@@ -163,6 +166,7 @@ public class UserController {
             UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
             temp.setId(e.getId());
             temp.setClassId(e.getEntityStudent().getStudentClass().getId());
+            temp.setUserId(e.getUsers().getId());
             lst.add(temp);
         });
         return ResponseEntity.ok(lst);

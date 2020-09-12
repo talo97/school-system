@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "conversation")
@@ -20,7 +21,11 @@ public class EntityConversation extends CommonEntity {
     private String topicText;
 
     @Column(name = "last_answer_date")
-    private long lastAnswerDate;
+    private Timestamp lastAnswerDate;
+
+    @ManyToOne
+    @JoinColumn(name = "first_answer")
+    private EntityMessage firstAnswer;
 
     @ManyToOne
     @JoinColumn(name = "user_first")

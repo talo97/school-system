@@ -9,6 +9,7 @@ import java.sql.Date;
 @Getter
 @Setter
 public class UserGetDTO {
+    private Long userId;
     private Long id;
     private String login;
     private String firstName = "";
