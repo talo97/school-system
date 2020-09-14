@@ -108,14 +108,36 @@ public class CompetitionController {
     @DeleteMapping("/competitionParticipation/{competitionParticipationId}")
     @ApiOperation(value = "Deassign student from competition",
             notes = "Operation for teacher only!")
-    public ResponseEntity<?> deleteStudentFromCompetition(@Valid @PathVariable Long competitionParticipationId){
+    public ResponseEntity<?> deleteStudentFromCompetition(@Valid @PathVariable Long competitionParticipationId) {
         EntityUser teacherUser = serviceUser.getCurrentUserFromToken().get();
         Optional<EntityCompetitionParticipation> competitionParticipation = serviceCompetitionParticipation.get(competitionParticipationId);
-        if(teacherUser.getUserType() == EnumUserType.TEACHER && competitionParticipation.isPresent()){
+        if (teacherUser.getUserType() == EnumUserType.TEACHER && competitionParticipation.isPresent()) {
             serviceCompetitionParticipation.delete(competitionParticipation.get());
             return ResponseEntity.ok().build();
-        }else{
+        } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/competition/{competitionId}")
+    @ApiOperation(value = "Delete competition record and all its competitionParticipation assignments.")
+    public ResponseEntity<?> deleteCompetition(@Valid @PathVariable Long competitionId) {
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+        if (currentUser.getUserType() != EnumUserType.ADMIN && currentUser.getUserType() != EnumUserType.TEACHER) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            Optional<EntityCompetition> competition = serviceCompetition.get(competitionId);
+            if (competition.isPresent()) {
+                List<EntityCompetitionParticipation> competitionParticipations = serviceCompetitionParticipation.findAllByCompetitionId(competitionId);
+                competitionParticipations.forEach(e -> {
+                    serviceCompetitionParticipation.delete(e);
+                });
+                serviceCompetition.delete(competition.get());
+                return ResponseEntity.ok().build();
+            }else{
+                return ResponseEntity.badRequest().build();
+            }
+
         }
     }
 
@@ -124,7 +146,7 @@ public class CompetitionController {
             notes = "Operation for authenticated user",
             response = CompetitionParticipationGetDTO.class,
             responseContainer = "List")
-    public ResponseEntity<List<CompetitionParticipationGetDTO>>getStudentsCompetition(@Valid @PathVariable Long competitionId){
+    public ResponseEntity<List<CompetitionParticipationGetDTO>> getStudentsCompetition(@Valid @PathVariable Long competitionId) {
         return ResponseEntity.ok(convertCompetitionParticipationToDTOList(serviceCompetitionParticipation.findAllByCompetitionId(competitionId)));
     }
 
