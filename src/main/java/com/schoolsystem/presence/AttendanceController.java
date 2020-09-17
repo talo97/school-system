@@ -116,7 +116,7 @@ public class AttendanceController {
     }
 
     @ApiOperation(value = "Show current user(student) attendance.",
-            notes = "Student only operation",
+            notes = "Student/Parent only operation",
             response = UserAttendanceDTO.class,
             responseContainer = "List")
     @GetMapping("/myAttendance")
@@ -124,7 +124,10 @@ public class AttendanceController {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.STUDENT)) {
             return ResponseEntity.ok().body(mapEntityPresenceToUserAttendanceDTO(servicePresence.find(currentUser.getEntityStudent())));
-        } else {
+        }else if(currentUser.getUserType().equals(EnumUserType.PARENT)){
+            return ResponseEntity.ok().body(mapEntityPresenceToUserAttendanceDTO(servicePresence.find(currentUser.getEntityParent().getEntityStudent())));
+        }
+        else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user is not of STUDENT type, this endpoint is for students only.");
         }
     }

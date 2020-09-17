@@ -51,14 +51,17 @@ public class MarkController {
 
     @GetMapping("/myMarks")
     @ApiOperation(value = "Show current student marks (by JWT token)",
-            notes = "Student only operation",
+            notes = "Student/Parent only operation",
             response = TeacherCourseMarksGetDTO.class,
             responseContainer = "List")
     public ResponseEntity<?> getMarks() {
         EntityUser user = serviceUser.getCurrentUserFromToken().get();
         if (user.getUserType().equals(EnumUserType.STUDENT)) {
             return ResponseEntity.ok(serviceMark.getStudentMarks(user.getEntityStudent()));
-        } else {
+        }else if(user.getUserType().equals(EnumUserType.PARENT)) {
+            return ResponseEntity.ok(serviceMark.getStudentMarks(user.getEntityParent().getEntityStudent()));
+        }
+        else {
             return ResponseEntity.badRequest().body("Current user is not a student, therefor cannot access this endpoint");
         }
     }
