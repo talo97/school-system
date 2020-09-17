@@ -28,6 +28,16 @@ public class ServiceLessonImpl extends CommonServiceImpl<EntityLesson, DaoLesson
     }
 
     @Override
+    public Long getTotalAmountOfLessons(EntityClass entityClass) {
+        return repository.countByEntityClassAndActiveIsTrue(entityClass);
+    }
+
+    @Override
+    public Long getTotalAmountOfLessons(List<EntityTeacherCourse> teacherCourses) {
+        return repository.countByTeacherCourseInAndActiveIsTrue(teacherCourses);
+    }
+
+    @Override
     public Boolean doesLessonAlreadyExist(EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber, Long entityClassId) {
         return repository.findByDayOfWeekAndLessonNumberAndEntityClassIdAndActiveIsTrue(dayOfWeek, lessonNumber, entityClassId).isPresent();
     }
@@ -51,6 +61,11 @@ public class ServiceLessonImpl extends CommonServiceImpl<EntityLesson, DaoLesson
         List<EntityLesson> lessons = new ArrayList<>();
         teacherCourses.forEach(e -> lessons.addAll(repository.findAllByTeacherCourseAndActiveIsTrue(e)));
         return lessons;
+    }
+
+    @Override
+    public List<EntityLesson> findAllByTeacherCoursesIn(List<EntityTeacherCourse> teacherCourses) {
+        return repository.findAllByTeacherCourseInAndActiveIsTrue(teacherCourses);
     }
 
     @Override

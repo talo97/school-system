@@ -11,11 +11,16 @@ import java.util.Optional;
 @Repository
 public interface DaoLesson extends JpaRepository<EntityLesson, Long> {
 
+    Long countByEntityClassAndActiveIsTrue(EntityClass entityClass);
+
+    Long countByTeacherCourseInAndActiveIsTrue(List<EntityTeacherCourse> teacherCourses);
+
     List<EntityLesson> findAllByActiveIsTrue();
 
     List<EntityLesson> findAllByEntityClassAndActiveIsTrue(EntityClass entityClass);
 
     List<EntityLesson> findAllByTeacherCourseAndActiveIsTrue(EntityTeacherCourse teacherCourse);
+    List<EntityLesson> findAllByTeacherCourseInAndActiveIsTrue(List<EntityTeacherCourse> teacherCourse);
 
     List<EntityLesson> findAllByTeacherCourseAndEntityClassAndActiveIsTrue(EntityTeacherCourse teacherCourse, EntityClass entityClass);
 

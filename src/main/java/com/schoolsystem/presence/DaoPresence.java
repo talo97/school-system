@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface DaoPresence extends JpaRepository<EntityPresence, Long> {
+    Long countByLessonIn(List<EntityLesson> lessons);
     List<EntityPresence> findAllByLessonAndDate(EntityLesson lesson, Date date);
     List<EntityPresence> findAllByStudent(EntityStudent student);
+    List<EntityPresence> findAllByStudentAndWasPresent(EntityStudent student, boolean wasPresent);
 }

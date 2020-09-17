@@ -13,6 +13,8 @@ public interface ServiceMark extends CommonService<EntityMark> {
 
     List<EntityMark> findAllByStudent(EntityStudent student);
 
+    List<EntityMark> findAllByStudentAndTeacherCourse(EntityStudent student, EntityTeacherCourse teacherCourse);
+
     List<EntityMark> findAllByClass(EntityClass entityClass);
 
     List<StudentMarksGetDTO> getStudentsMarksByClassAndCourse(EntityClass entityClass, EntityTeacherCourse teacherCourse);

@@ -49,6 +49,12 @@ public class ServiceMarkImpl extends CommonServiceImpl<EntityMark, DaoMark> impl
     }
 
     @Override
+    public List<EntityMark> findAllByStudentAndTeacherCourse(EntityStudent student, EntityTeacherCourse teacherCourse) {
+        return repository.findAllByStudentAndTeacherCourse(student, teacherCourse);
+    }
+
+
+    @Override
     public List<EntityMark> findAllByClass(EntityClass entityClass) {
         return repository.findAllByStudentIn(serviceStudent.findAllByStudentClass(entityClass));
     }

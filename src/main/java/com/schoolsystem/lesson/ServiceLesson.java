@@ -11,11 +11,17 @@ import java.util.Optional;
 public interface ServiceLesson extends CommonService<EntityLesson> {
     List<EntityLesson> findAllByClass(EntityClass entityClass);
 
+    Long getTotalAmountOfLessons(EntityClass entityClass);
+
+    Long getTotalAmountOfLessons(List<EntityTeacherCourse> teacherCourses);
+
     Boolean doesLessonAlreadyExist(EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber, Long entityClassId);
 
     Boolean isTeacherAvailable(EntityTeacher entityTeacher, EnumDayOfWeek dayOfWeek, EnumLessonNumber lessonNumber);
 
     List<EntityLesson> findAllByTeacher(EntityTeacher entityTeacher);
+
+    List<EntityLesson> findAllByTeacherCoursesIn(List<EntityTeacherCourse> teacherCourses);
 
     List<EntityLesson> findAllByTeacherAndClass(EntityTeacher entityTeacher, EntityClass studentClass);
 

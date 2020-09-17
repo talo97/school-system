@@ -52,6 +52,16 @@ public class ServicePresenceImpl extends CommonServiceImpl<EntityPresence, DaoPr
     }
 
     @Override
+    public List<EntityPresence> find(EntityStudent student, boolean wasPresent) {
+        return repository.findAllByStudentAndWasPresent(student, wasPresent);
+    }
+
+    @Override
+    public Long getTotalAmountOfPresence(List<EntityLesson> lessons) {
+        return repository.countByLessonIn(lessons);
+    }
+
+    @Override
     public void save(EntityStudent student, Boolean isPresent, EntityLesson lesson, Date date) {
         EntityPresence presence = new EntityPresence();
         presence.setDate(date);
