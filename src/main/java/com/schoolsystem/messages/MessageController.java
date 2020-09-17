@@ -87,6 +87,10 @@ public class MessageController {
                 || conversation.get().getUserSecond().getId().equals(currentUser.getId()))) {
             EntityMessage entityMessage = conversation.get().getFirstAnswer();
             List<MessageGetDTO> messages = new ArrayList<>();
+            MessageGetDTO firstAnswer = new MessageGetDTO();
+            firstAnswer.setOwner(convertUserToUserMessageDTO(conversation.get().getUserFirst()));
+            firstAnswer.setAnswerText(conversation.get().getTopicText());
+            messages.add(firstAnswer);
             while (entityMessage != null) {
                 MessageGetDTO messageGetDTO = new MessageGetDTO();
                 messageGetDTO.setAnswerText(entityMessage.getAnswerText());
