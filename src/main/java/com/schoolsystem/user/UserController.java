@@ -112,6 +112,10 @@ public class UserController {
         switch (currentUser.getUserType()) {
             case TEACHER:
                 currentUserDTO.get().setId(currentUser.getEntityTeacher().getId());
+                Optional<EntityClass> optionalEntityClass = serviceClass.findBySupervisor(currentUser.getEntityTeacher());
+                if(optionalEntityClass.isPresent()){
+                    currentUserDTO.get().setClassId(optionalEntityClass.get().getId());
+                }
                 break;
             case STUDENT:
                 currentUserDTO.get().setId(currentUser.getEntityStudent().getId());
