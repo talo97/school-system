@@ -8,7 +8,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class ClassAttendanceDTO {
+public class ClassReportAttendanceDTO {
     private String className = "";
     private EnumEducationStage educationStage;
     private long hoursPerWeek = 0L;

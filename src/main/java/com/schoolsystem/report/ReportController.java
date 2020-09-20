@@ -51,15 +51,15 @@ public class ReportController {
     }
 
     @GetMapping("/attendanceClasses")
-    public ResponseEntity<List<ClassAttendanceDTO>> reportClasses() {
+    public ResponseEntity<List<ClassReportAttendanceDTO>> reportClasses() {
         List<EntityClass> classes = serviceClass.getAll();
-        List<ClassAttendanceDTO> classAttendances = new ArrayList<>();
+        List<ClassReportAttendanceDTO> classAttendances = new ArrayList<>();
         for (EntityClass entityClass : classes) {
-            ClassAttendanceDTO classAttendanceDTO = new ClassAttendanceDTO();
-            classAttendanceDTO.setClassName(entityClass.getName());
-            classAttendanceDTO.setEducationStage(entityClass.getEnumEducationStage());
+            ClassReportAttendanceDTO classReportAttendanceDTO = new ClassReportAttendanceDTO();
+            classReportAttendanceDTO.setClassName(entityClass.getName());
+            classReportAttendanceDTO.setEducationStage(entityClass.getEnumEducationStage());
             List<EntityLesson> classLessons = serviceLesson.findAllByClass(entityClass);
-            classAttendanceDTO.setHoursPerWeek(classLessons.size());
+            classReportAttendanceDTO.setHoursPerWeek(classLessons.size());
             List<EntityStudent> students = serviceStudent.findAllByStudentClass(entityClass);
             List<StudentTotalAttendanceDTO> studentTotalAttendanceDTOS = new ArrayList<>();
             int totalHours = 0;
@@ -72,9 +72,9 @@ public class ReportController {
                 studentTotalAttendanceDTOS.add(studentTotalAttendance);
                 totalHours = presences.size();
             }
-            classAttendanceDTO.setTotalHours(totalHours);
-            classAttendanceDTO.setStudents(studentTotalAttendanceDTOS);
-            classAttendances.add(classAttendanceDTO);
+            classReportAttendanceDTO.setTotalHours(totalHours);
+            classReportAttendanceDTO.setStudents(studentTotalAttendanceDTOS);
+            classAttendances.add(classReportAttendanceDTO);
         }
         return ResponseEntity.ok(classAttendances);
     }
