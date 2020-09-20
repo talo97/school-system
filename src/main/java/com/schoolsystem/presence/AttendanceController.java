@@ -124,10 +124,9 @@ public class AttendanceController {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
         if (currentUser.getUserType().equals(EnumUserType.STUDENT)) {
             return ResponseEntity.ok().body(mapEntityPresenceToUserAttendanceDTO(servicePresence.find(currentUser.getEntityStudent())));
-        }else if(currentUser.getUserType().equals(EnumUserType.PARENT)){
+        } else if (currentUser.getUserType().equals(EnumUserType.PARENT)) {
             return ResponseEntity.ok().body(mapEntityPresenceToUserAttendanceDTO(servicePresence.find(currentUser.getEntityParent().getEntityStudent())));
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user is not of STUDENT type, this endpoint is for students only.");
         }
     }
@@ -146,6 +145,23 @@ public class AttendanceController {
             } else {
                 return ResponseEntity.badRequest().build();
             }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @ApiOperation(value = "Get attendance of given student by id.",
+            notes = "Teacher only operation")
+    @GetMapping("/classAttendance/{studentId}")
+    public ResponseEntity<List<UserAttendanceDTO>> getClassAttendance(@Valid @PathVariable Long studentId) {
+        //check if current user is teacher
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+        if (currentUser.getUserType().equals(EnumUserType.TEACHER)) {
+            Optional<EntityStudent> student = serviceStudent.get(studentId);
+            return student.map(entityStudent -> {
+                List<EntityPresence> presences = servicePresence.find(entityStudent);
+                return ResponseEntity.ok(mapEntityPresenceToUserAttendanceDTO(presences));
+            }).orElse(ResponseEntity.badRequest().build());
         } else {
             return ResponseEntity.badRequest().build();
         }
