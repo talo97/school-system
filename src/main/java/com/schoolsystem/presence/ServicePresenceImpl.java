@@ -57,8 +57,8 @@ public class ServicePresenceImpl extends CommonServiceImpl<EntityPresence, DaoPr
     }
 
     @Override
-    public Long getTotalAmountOfPresence(List<EntityLesson> lessons) {
-        return repository.countByLessonIn(lessons);
+    public List<EntityPresence> getPresenceFromLessons(List<EntityLesson> lessons) {
+        return repository.findAllByLessonIn(lessons);
     }
 
     @Override

@@ -20,8 +20,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/report")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -90,7 +97,9 @@ public class ReportController {
             List<EntityTeacherCourse> teacherCourses = serviceTeacherCourse.findByTeacher(entityTeacher);
             List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesIn(teacherCourses);
             teacherAttendanceDTO.setHoursPerWeek(teacherLessons.size());
-            long attendedHours = servicePresence.getTotalAmountOfPresence(teacherLessons);
+            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons).stream().
+                    filter(distinctByKeys(EntityPresence::getLesson, EntityPresence::getDate))
+                    .count();
             teacherAttendanceDTO.setTotalHours(attendedHours);
             teacherAttendanceDTO.setAttendedHours(attendedHours);
             teacherAttendanceDTOS.add(teacherAttendanceDTO);
@@ -98,6 +107,15 @@ public class ReportController {
         return ResponseEntity.ok(teacherAttendanceDTOS);
     }
 
+    private <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
+        final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> {
+            final List<?> keys = Arrays.stream(keyExtractors)
+                    .map(ke -> ke.apply(t))
+                    .collect(Collectors.toList());
+            return seen.putIfAbsent(keys, Boolean.TRUE) == null;
+        };
+    }
 
     private StudentAverageGradeDTO getStudentAverageGradeDTO(EntityStudent student) {
         StudentAverageGradeDTO studentAverageGrade = new StudentAverageGradeDTO();
