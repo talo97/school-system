@@ -55,10 +55,9 @@ public class MarkController {
         EntityUser user = serviceUser.getCurrentUserFromToken().get();
         if (user.getUserType().equals(EnumUserType.STUDENT)) {
             return ResponseEntity.ok(serviceMark.getStudentMarks(user.getEntityStudent()));
-        }else if(user.getUserType().equals(EnumUserType.PARENT)) {
+        } else if (user.getUserType().equals(EnumUserType.PARENT)) {
             return ResponseEntity.ok(serviceMark.getStudentMarks(user.getEntityParent().getEntityStudent()));
-        }
-        else {
+        } else {
             return ResponseEntity.badRequest().body("Current user is not a student, therefor cannot access this endpoint");
         }
     }
@@ -71,9 +70,10 @@ public class MarkController {
     public ResponseEntity<?> getMarksByClassAndCourse(@Valid @PathVariable Long classId, @Valid @PathVariable Long teacherCourseId) {
         return serviceClass.get(classId).flatMap(entityClass -> serviceTeacherCourse.get(teacherCourseId).map(teacherCourse -> {
             EntityUser currentUser = serviceUser.getCurrentUserFromToken().get(); //user exist coz otherwise this endpoint would be unavailable, no check required.
-            if (currentUser.getUserType().equals(EnumUserType.TEACHER)
+            if ((currentUser.getUserType().equals(EnumUserType.TEACHER)
                     && teacherCourse.getTeacher().getId().equals(currentUser.getEntityTeacher().getId())
-                    && serviceLesson.isThereLessonForTeacherCourseInClass(teacherCourse, entityClass)) {
+                    && serviceLesson.isThereLessonForTeacherCourseInClass(teacherCourse, entityClass)) ||
+                    entityClass.getSupervisor().getUsers().getId().equals(currentUser.getId())) {
                 return ResponseEntity.ok(serviceMark.getStudentsMarksByClassAndCourse(entityClass, teacherCourse));
             } else {
                 return ResponseEntity.badRequest().body("Current user is either not a teacher or doesn't teach given class");
@@ -100,8 +100,8 @@ public class MarkController {
                 entityMark.setDescription(markEdit.getDescription());
                 MarkShortGetDTO toReturn = new MarkShortGetDTO(serviceMark.save(entityMark).getId(), entityMark.getEnumGrade(), entityMark.getDescription(), entityMark.getLastChange());
                 return ResponseEntity.ok(toReturn);
-            }else{
-            return ResponseEntity.badRequest().body("Current user is not responsible for this course.");
+            } else {
+                return ResponseEntity.badRequest().body("Current user is not responsible for this course.");
             }
         }).orElse(ResponseEntity.badRequest().body("Mark of given ID doesn't exist"));
 
@@ -109,8 +109,8 @@ public class MarkController {
 
     @DeleteMapping("/marks/{markId}")
     @ApiOperation(value = "Delete mark by ID",
-     notes = "Teacher only operation. Works only for assigned teachers.")
-    public ResponseEntity<?> deleteMark(@Valid @PathVariable Long markId){
+            notes = "Teacher only operation. Works only for assigned teachers.")
+    public ResponseEntity<?> deleteMark(@Valid @PathVariable Long markId) {
         return serviceMark.get(markId).map(entityMark -> {
             EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
             if (currentUser.getUserType().equals(EnumUserType.TEACHER)
@@ -118,7 +118,7 @@ public class MarkController {
                 //teacher and owner of the mark
                 serviceMark.delete(entityMark);
                 return ResponseEntity.ok("Deleted successfully");
-            }else{
+            } else {
                 return ResponseEntity.badRequest().body(("Current user is not responsible for this course."));
             }
         }).orElse(ResponseEntity.badRequest().body("Mark of given ID doesn't exist"));
