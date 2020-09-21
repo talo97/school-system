@@ -28,9 +28,6 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class MarkController {
-    //TODO:: PUT mark(edition plzzzzz)
-
-
     private final ServiceMark serviceMark;
     private final ServiceUser serviceUser;
     private final ServiceStudent serviceStudent;

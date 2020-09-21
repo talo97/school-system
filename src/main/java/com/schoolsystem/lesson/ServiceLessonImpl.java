@@ -86,6 +86,7 @@ public class ServiceLessonImpl extends CommonServiceImpl<EntityLesson, DaoLesson
         return repository.findAllByActiveIsTrue();
     }
 
+    //it shouldn't be here... change later!!
     @Override
     public List<EntityTeacherCourse> findDistinctTeacherCoursesOfGivenClass(EntityClass entityClass) {
         return repository.findAllByEntityClassAndActiveIsTrue(entityClass).
