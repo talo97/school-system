@@ -70,10 +70,7 @@ public class MarkController {
     public ResponseEntity<?> getMarksByClassAndCourse(@Valid @PathVariable Long classId, @Valid @PathVariable Long teacherCourseId) {
         return serviceClass.get(classId).flatMap(entityClass -> serviceTeacherCourse.get(teacherCourseId).map(teacherCourse -> {
             EntityUser currentUser = serviceUser.getCurrentUserFromToken().get(); //user exist coz otherwise this endpoint would be unavailable, no check required.
-            if ((currentUser.getUserType().equals(EnumUserType.TEACHER)
-                    && teacherCourse.getTeacher().getId().equals(currentUser.getEntityTeacher().getId())
-                    && serviceLesson.isThereLessonForTeacherCourseInClass(teacherCourse, entityClass)) ||
-                    entityClass.getSupervisor().getUsers().getId().equals(currentUser.getId())) {
+            if (currentUser.getUserType().equals(EnumUserType.TEACHER)) {
                 return ResponseEntity.ok(serviceMark.getStudentsMarksByClassAndCourse(entityClass, teacherCourse));
             } else {
                 return ResponseEntity.badRequest().body("Current user is either not a teacher or doesn't teach given class");
