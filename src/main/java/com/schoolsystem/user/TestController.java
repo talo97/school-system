@@ -168,7 +168,13 @@ public class TestController {
         List<EntityLesson> lessons = serviceLesson.findAllByClass(entityClass);
         for (EntityLesson lesson : lessons) {
             for (EntityStudent student : students) {
-                saveAttendanceSingle(weekDateMap.get(lesson.getDayOfWeek()), true, lesson, student);
+                Random random = new Random();
+                double randomNumber = random.nextDouble();
+                boolean wasPresent = true;
+                if(randomNumber>0.95){
+                    wasPresent = false;
+                }
+                saveAttendanceSingle(weekDateMap.get(lesson.getDayOfWeek()), wasPresent, lesson, student);
             }
         }
     }
@@ -179,6 +185,9 @@ public class TestController {
         EntityClass classA = serviceClass.get(1L).get();
         EntityClass classB = serviceClass.get(2L).get();
         String stringDate = "2020-09-21";
+        saveAttendanceClass(classA, stringDate);
+        saveAttendanceClass(classB, stringDate);
+        stringDate = "2020-09-28";
         saveAttendanceClass(classA, stringDate);
         saveAttendanceClass(classB, stringDate);
     }

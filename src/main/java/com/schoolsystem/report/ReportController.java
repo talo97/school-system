@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,8 +99,9 @@ public class ReportController {
             List<EntityTeacherCourse> teacherCourses = serviceTeacherCourse.findByTeacher(entityTeacher);
             List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesIn(teacherCourses);
             teacherAttendanceDTO.setHoursPerWeek(teacherLessons.size());
-            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons).stream().
-                    filter(distinctByKeys(EntityPresence::getLesson, EntityPresence::getDate))
+            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons)
+                    .stream()
+                    .filter(distinctByKeys(EntityPresence::getLesson, EntityPresence::getDate))
                     .count();
             teacherAttendanceDTO.setTotalHours(attendedHours);
             teacherAttendanceDTO.setAttendedHours(attendedHours);
@@ -143,6 +146,9 @@ public class ReportController {
                 totalTeacherCoursesWithMarks--;
                 averageGrade = -1d;
             }
+            averageGrade = BigDecimal.valueOf(averageGrade)
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .doubleValue();
             courseGradeDTO.setAverageGrade(averageGrade);
             courseGrades.add(courseGradeDTO);
         }
@@ -152,6 +158,9 @@ public class ReportController {
             averageGradeTotal = -1d;
         }
         studentAverageGrade.setCourseGrades(courseGrades);
+        averageGradeTotal = BigDecimal.valueOf(averageGradeTotal)
+                .setScale(1, RoundingMode.HALF_UP)
+                .doubleValue();
         studentAverageGrade.setAverageGradeTotal(averageGradeTotal);
         return studentAverageGrade;
     }
