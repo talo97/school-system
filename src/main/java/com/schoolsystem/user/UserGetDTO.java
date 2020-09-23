@@ -14,6 +14,8 @@ public class UserGetDTO {
     private String login;
     private String firstName = "";
     private String lastName= "";
+    private String phoneNumber;
+    private String email;
     @ApiModelProperty(value = "Date format: yyyy-mm-dd")
     private Date birthDate;
     private EnumUserType userType;

@@ -303,6 +303,11 @@ public class TestController {
             userTeacher.setPassword("teacher" + i);
             userTeacher.setLastName("teacher" + i);
             userTeacher.setFirstName("teacher" + i);
+            userTeacher.setEmail("teacher" + i + "@mail.com");
+            Random random = new Random();
+            double randomNumber = random.nextDouble();
+            long randomPhone = (int) (randomNumber * 1000000000);
+            userTeacher.setPhoneNumber(String.valueOf(randomPhone));
             userTeacher.setUserType(EnumUserType.TEACHER);
             userTeacher.setBirthDate(new Date(315532800000L + i * 25532800000L));
             EntityTeacher teacher = new EntityTeacher();
@@ -335,6 +340,11 @@ public class TestController {
             userParent.setFirstName("parent" + i);
             userParent.setLogin("parent" + i);
             userParent.setPassword("parent" + i);
+            Random random = new Random();
+            double randomNumber = random.nextDouble();
+            long randomPhone = (int) (randomNumber * 1000000000);
+            userParent.setPhoneNumber(String.valueOf(randomPhone));
+            userParent.setEmail("parent" + i + "@mail.com");
             userParent.setUserType(EnumUserType.PARENT);
             userParent.setBirthDate(new Date(415532800000L + i * 5532800000L));
             parent.setUsers(userParent);
@@ -348,6 +358,10 @@ public class TestController {
             userStudent.setPassword("student" + i);
             userStudent.setFirstName("student" + i);
             userStudent.setLastName("student" + i);
+            userStudent.setEmail("student" + i + "@mail.com");
+            randomNumber = random.nextDouble();
+            randomPhone = (int) (randomNumber * 1000000000);
+            userStudent.setPhoneNumber(String.valueOf(randomPhone));
             student.setStudentClass(entityClass);
             student.setParent(parent);
             student.setUsers(userStudent);
@@ -404,6 +418,8 @@ public class TestController {
         admin.setBirthDate(date);
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
+        admin.setPhoneNumber("717 131 333");
+        admin.setEmail("admin@gmail.com");
         serviceUser.save(admin);
     }
 

@@ -20,9 +20,13 @@ public class StudentPostDTO {
     private Date birthDate;
 
     private Long classId;
+    private String phoneNumber;
+
+    private String email;
 
     public boolean isEmpty() {
-        return login == null || login.isEmpty() || password == null || password.isEmpty() ||
+        return login == null || login.isEmpty() || password == null || password.isEmpty()
+                || email == null || email.isEmpty() || phoneNumber == null || phoneNumber.isEmpty() ||
                 firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty() ||
                 classId == null || classId < 0;
     }

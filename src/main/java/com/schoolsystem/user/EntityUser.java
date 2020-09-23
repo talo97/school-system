@@ -29,20 +29,26 @@ public class EntityUser extends CommonEntity {
     private String firstName = "";
 
     @Column(name = "last_name")
-    private String lastName= "";
+    private String lastName = "";
 
     @Column(name = "birthdate")
     private Date birthDate;
 
+    @Column(name = "phone_number")
+    private String phoneNumber = "";
+
+    @Column(name = "email")
+    private String email = "";
+
     @Column(name = "user_type")
     private EnumUserType userType;
 
-    @OneToOne(mappedBy="users")
+    @OneToOne(mappedBy = "users")
     private EntityStudent entityStudent;
 
-    @OneToOne(mappedBy="users")
+    @OneToOne(mappedBy = "users")
     private EntityTeacher entityTeacher;
 
-    @OneToOne(mappedBy="users")
+    @OneToOne(mappedBy = "users")
     private EntityParent entityParent;
 }
