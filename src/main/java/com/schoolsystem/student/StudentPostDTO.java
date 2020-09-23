@@ -25,8 +25,7 @@ public class StudentPostDTO {
     private String email;
 
     public boolean isEmpty() {
-        return login == null || login.isEmpty() || password == null || password.isEmpty()
-                || email == null || email.isEmpty() || phoneNumber == null || phoneNumber.isEmpty() ||
+        return login == null || login.isEmpty() || password == null || password.isEmpty() ||
                 firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty() ||
                 classId == null || classId < 0;
     }

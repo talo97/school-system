@@ -25,8 +25,8 @@ public class UserPostDTO {
 
     public boolean isEmpty() {
         return login == null || login.isEmpty() || password == null || password.isEmpty() ||
-                firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty()
-                || phoneNumber == null || phoneNumber.isEmpty() || email == null || email.isEmpty();
+                firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty();
+
     }
 
 }
