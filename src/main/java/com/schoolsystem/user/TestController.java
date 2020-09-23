@@ -316,12 +316,12 @@ public class TestController {
         EntityClass entityClassA = new EntityClass();
         entityClassA.setSupervisor(serviceTeacher.get(1L).get());
         entityClassA.setEnumEducationStage(EnumEducationStage.FIRST_YEAR);
-        entityClassA.setName("Klasa A");
+        entityClassA.setName("Pierwsza A");
         serviceClass.save(entityClassA);
         EntityClass entityClassB = new EntityClass();
         entityClassB.setSupervisor(serviceTeacher.get(2L).get());
         entityClassB.setEnumEducationStage(EnumEducationStage.FIRST_YEAR);
-        entityClassB.setName("Klasa B");
+        entityClassB.setName("Pierwsza B");
         serviceClass.save(entityClassB);
         saveStudentsAndParents(entityClassA, 1);
         saveStudentsAndParents(entityClassB, 11);
