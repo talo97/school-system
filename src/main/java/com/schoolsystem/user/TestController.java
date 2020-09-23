@@ -116,7 +116,7 @@ public class TestController {
         serviceMark.save(entityMark);
     }
 
-    private void saveGrades(){
+    private void saveGrades() {
         EntityClass classA = serviceClass.get(1L).get();
         EntityClass classB = serviceClass.get(2L).get();
         List<EntityStudent> studentsA = serviceStudent.findAllByStudentClass(classA);
@@ -171,10 +171,29 @@ public class TestController {
                 Random random = new Random();
                 double randomNumber = random.nextDouble();
                 boolean wasPresent = true;
-                if(randomNumber>0.95){
+                if (randomNumber > 0.95) {
                     wasPresent = false;
                 }
                 saveAttendanceSingle(weekDateMap.get(lesson.getDayOfWeek()), wasPresent, lesson, student);
+            }
+        }
+    }
+
+    private void saveAttendanceClassOnlyTwoDays(EntityClass entityClass, String startDate) {
+        Map<EnumDayOfWeek, Date> weekDateMap = initWeekDateMap(startDate);
+        List<EntityStudent> students = serviceStudent.findAllByStudentClass(entityClass);
+        List<EntityLesson> lessons = serviceLesson.findAllByClass(entityClass);
+        for (EntityLesson lesson : lessons) {
+            if (lesson.getDayOfWeek() == EnumDayOfWeek.MONDAY || lesson.getDayOfWeek() == EnumDayOfWeek.TUESDAY) {
+                for (EntityStudent student : students) {
+                    Random random = new Random();
+                    double randomNumber = random.nextDouble();
+                    boolean wasPresent = true;
+                    if (randomNumber > 0.95) {
+                        wasPresent = false;
+                    }
+                    saveAttendanceSingle(weekDateMap.get(lesson.getDayOfWeek()), wasPresent, lesson, student);
+                }
             }
         }
     }
@@ -184,12 +203,16 @@ public class TestController {
         //21 - 25/ 09/ 2020
         EntityClass classA = serviceClass.get(1L).get();
         EntityClass classB = serviceClass.get(2L).get();
-        String stringDate = "2020-09-21";
+        String stringDate = "2020-09-07";
         saveAttendanceClass(classA, stringDate);
         saveAttendanceClass(classB, stringDate);
-        stringDate = "2020-09-28";
+        stringDate = "2020-09-14";
         saveAttendanceClass(classA, stringDate);
         saveAttendanceClass(classB, stringDate);
+        //fast cheat to save first two days of next week
+        stringDate = "2020-09-21";
+        saveAttendanceClassOnlyTwoDays(classA, stringDate);
+        saveAttendanceClassOnlyTwoDays(classB, stringDate);
     }
 
     private void saveLesson(EntityClass entityClass, EnumDayOfWeek enumDayOfWeek, EnumLessonNumber lessonNumber, EntityTeacherCourse teacherCourse) {

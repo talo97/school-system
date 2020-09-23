@@ -72,7 +72,7 @@ public class AttendanceController {
             //2 check if teacher has any lesson for given day and hour
             //TODO::FOR TEST HARDCODED DAY AND LESSON NUMBER !!!!!!!! CHANGEW LATER !!!!!!!!!!!!!!!!
             Optional<EntityLesson> lessonOptional = serviceLesson.find(serviceTeacherCourse.findByTeacher(currentUser.getEntityTeacher()),
-                    EnumDayOfWeek.MONDAY, EnumLessonNumber.FIRST);
+                    enumDayOfWeek, enumLessonNumber);
             if (lessonOptional.isPresent()) {
                 //check if presence was already saved (if so then convert already saved one to LessonPresenceDTO)
                 List<EntityPresence> presences = servicePresence.find(lessonOptional.get(), schoolTimeUtil.getCurrentSqlDate());
