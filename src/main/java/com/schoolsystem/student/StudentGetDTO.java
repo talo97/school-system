@@ -21,5 +21,7 @@ public class StudentGetDTO {
     private Date birthDate;
     private ClassGetDTO studentClass;
     private EnumUserType userType;
+    private String phoneNumber;
+    private String email;
 
 }
