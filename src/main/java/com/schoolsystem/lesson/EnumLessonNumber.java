@@ -29,11 +29,6 @@ public enum EnumLessonNumber {
     private static final Map<Integer, EnumLessonNumber> LOOKUP = Arrays.stream(values()).collect(Collectors.toMap(EnumLessonNumber::getHour, x -> x));
 
     public static Optional<EnumLessonNumber> get(Integer lessonNumber) {
-        //TODO::delete later it is only for testing!
-        if(lessonNumber<8||lessonNumber>16){
-            return Optional.of(FIRST);
-        }
-        //end of testing part
         if (LOOKUP.get(lessonNumber) != null) {
             return Optional.of(LOOKUP.get(lessonNumber));
         } else {
