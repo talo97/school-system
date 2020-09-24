@@ -14,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,9 +104,7 @@ public class MarkController {
 
     }
 
-
-    @RequestMapping(value = "/marks/{markId}", method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping("/marks/{markId}")
     @ApiOperation(value = "Delete mark by ID",
             notes = "Teacher only operation. Works only for assigned teachers.")
     public ResponseEntity<?> deleteMark(@Valid @PathVariable Long markId) {
@@ -117,11 +114,11 @@ public class MarkController {
                     && entityMark.getTeacherCourse().getTeacher().getId().equals(currentUser.getEntityTeacher().getId())) {
                 //teacher and owner of the mark
                 serviceMark.delete(entityMark);
-                return ResponseEntity.ok("Deleted successfully");
+                return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body(("Current user is not responsible for this course."));
+                return ResponseEntity.badRequest().build();
             }
-        }).orElse(ResponseEntity.badRequest().body("Mark of given ID doesn't exist"));
+        }).orElse(ResponseEntity.badRequest().build());
     }
 
 

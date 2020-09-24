@@ -11,7 +11,6 @@ import com.schoolsystem.teacher.ServiceTeacher;
 import com.schoolsystem.user.UserGetDTO;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -121,16 +120,15 @@ public class LessonController {
         return ResponseEntity.ok(savedLesson);
     }
 
-    @RequestMapping(value = "/lessons/{lessonId}", method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping("/lessons/{lessonId}")
     public ResponseEntity<?> deleteLesson(@Valid @PathVariable Long lessonId) {
         Optional<EntityLesson> lesson = serviceLesson.get(lessonId);
         if (lesson.isPresent()) {
             lesson.get().setActive(false);
             serviceLesson.update(lesson.get());
-            return ResponseEntity.ok("Lesson was successfully removed from active lessons");
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.badRequest().body("Lesson with given ID doesn't exist");
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/lessons/{id}")
