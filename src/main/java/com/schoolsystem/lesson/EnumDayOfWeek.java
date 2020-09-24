@@ -25,12 +25,10 @@ public enum EnumDayOfWeek {
     private static final Map<DayOfWeek, EnumDayOfWeek> LOOKUP = Arrays.stream(values()).collect(Collectors.toMap(EnumDayOfWeek::getUselessThingToDoButWhatever, x -> x));
 
     public static Optional<EnumDayOfWeek> get(DayOfWeek dayOfWeek) {
-        //TODO::CHANGE LATER!!! FOR testing rn
-        return Optional.of(MONDAY);
-//        if (LOOKUP.get(dayOfWeek) != null) {
-//            return Optional.of(LOOKUP.get(dayOfWeek));
-//        } else {
-//            return Optional.empty();
-//        }
+        if (LOOKUP.get(dayOfWeek) != null) {
+            return Optional.of(LOOKUP.get(dayOfWeek));
+        } else {
+            return Optional.empty();
+        }
     }
 }
