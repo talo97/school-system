@@ -11,6 +11,7 @@ import com.schoolsystem.teacher.ServiceTeacher;
 import com.schoolsystem.user.UserGetDTO;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -120,7 +121,8 @@ public class LessonController {
         return ResponseEntity.ok(savedLesson);
     }
 
-    @DeleteMapping("/lessons/{lessonId}")
+    @RequestMapping(value = "/lessons/{lessonId}", method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteLesson(@Valid @PathVariable Long lessonId) {
         Optional<EntityLesson> lesson = serviceLesson.get(lessonId);
         if (lesson.isPresent()) {
