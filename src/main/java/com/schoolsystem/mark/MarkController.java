@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,7 +105,9 @@ public class MarkController {
 
     }
 
-    @DeleteMapping("/marks/{markId}")
+
+    @RequestMapping(value = "/marks/{markId}", method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Delete mark by ID",
             notes = "Teacher only operation. Works only for assigned teachers.")
     public ResponseEntity<?> deleteMark(@Valid @PathVariable Long markId) {
