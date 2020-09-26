@@ -13,5 +13,6 @@ public interface DaoPresence extends JpaRepository<EntityPresence, Long> {
     List<EntityPresence> findAllByLessonIn(List<EntityLesson> lessons);
     List<EntityPresence> findAllByLessonAndDate(EntityLesson lesson, Date date);
     List<EntityPresence> findAllByStudent(EntityStudent student);
+    List<EntityPresence> findAllByStudentAndDateGreaterThanEqualAndDateLessThan(EntityStudent student, Date dateFrom, Date dateTo);
     List<EntityPresence> findAllByStudentAndWasPresent(EntityStudent student, boolean wasPresent);
 }

@@ -194,6 +194,31 @@ public class UserController {
         return ResponseEntity.ok(lst);
     }
 
+    @GetMapping("/studentsWithParents")
+    public ResponseEntity<List<StudentWithParentDTO>> getStudentsWithParents() {
+        List<StudentWithParentDTO> lst = new ArrayList<>();
+        serviceStudent.getAll().forEach(e -> {
+            StudentWithParentDTO temp = modelMapper.map(e.getUsers(), StudentWithParentDTO.class);
+            temp.setUserId(e.getUsers().getId());
+            temp.setParentFirstName(e.getParent().getUsers().getFirstName());
+            temp.setParentLastName(e.getParent().getUsers().getLastName());
+            lst.add(temp);
+        });
+        return ResponseEntity.ok(lst);
+    }
+    @GetMapping("/parentsWithStudents")
+    public ResponseEntity<List<ParentWithStudentDTO>> getParentsWithStudents() {
+        List<ParentWithStudentDTO> lst = new ArrayList<>();
+        serviceParent.getAll().forEach(e -> {
+            ParentWithStudentDTO temp = modelMapper.map(e.getUsers(), ParentWithStudentDTO.class);
+            temp.setUserId(e.getUsers().getId());
+            temp.setStudentFirstName(e.getEntityStudent().getUsers().getFirstName());
+            temp.setStudentLastName(e.getEntityStudent().getUsers().getLastName());
+            lst.add(temp);
+        });
+        return ResponseEntity.ok(lst);
+    }
+
     @GetMapping("/students/{id}")
     @ApiOperation(value = "Returns all students of given class",
             notes = "Teacher and Admin only operation",
@@ -211,11 +236,11 @@ public class UserController {
 
     @ApiOperation(value = "Admin only, change user information")
     @PutMapping("/users/{userId}")
-    public ResponseEntity<?> editUser(@Valid@PathVariable Long userId, @Valid @RequestBody UserPutDTO userPutDTO){
+    public ResponseEntity<?> editUser(@Valid @PathVariable Long userId, @Valid @RequestBody UserPutDTO userPutDTO) {
         EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
-        if(currentUser.getUserType() ==EnumUserType.ADMIN){
+        if (currentUser.getUserType() == EnumUserType.ADMIN) {
             Optional<EntityUser> userOptional = serviceUser.get(userId);
-            if(userOptional.isPresent()){
+            if (userOptional.isPresent()) {
                 EntityUser user = userOptional.get();
                 user.setPhoneNumber(userPutDTO.getPhoneNumber());
                 user.setEmail(userPutDTO.getEmail());

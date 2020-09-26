@@ -52,6 +52,11 @@ public class ServicePresenceImpl extends CommonServiceImpl<EntityPresence, DaoPr
     }
 
     @Override
+    public List<EntityPresence> find(EntityStudent student, Date dateFrom, Date dateTo) {
+        return repository.findAllByStudentAndDateGreaterThanEqualAndDateLessThan(student, dateFrom, dateTo);
+    }
+
+    @Override
     public List<EntityPresence> find(EntityStudent student, boolean wasPresent) {
         return repository.findAllByStudentAndWasPresent(student, wasPresent);
     }
@@ -59,6 +64,11 @@ public class ServicePresenceImpl extends CommonServiceImpl<EntityPresence, DaoPr
     @Override
     public List<EntityPresence> getPresenceFromLessons(List<EntityLesson> lessons) {
         return repository.findAllByLessonIn(lessons);
+    }
+
+    @Override
+    public List<EntityPresence> getPresenceFromLessons(List<EntityLesson> lessons, Date dateFrom, Date dateTo) {
+        return null;
     }
 
     @Override

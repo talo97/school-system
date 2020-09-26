@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +80,9 @@ public class ReportController {
                 List<EntityPresence> presences = servicePresence.find(student);
                 studentTotalAttendance.setAttendedHours(presences.stream().filter(EntityPresence::getWasPresent).count());
                 studentTotalAttendanceDTOS.add(studentTotalAttendance);
-                totalHours = presences.size();
+                if (totalHours < presences.size()) {
+                    totalHours = presences.size();
+                }
             }
             classReportAttendanceDTO.setTotalHours(totalHours);
             classReportAttendanceDTO.setStudents(studentTotalAttendanceDTOS);
@@ -88,9 +91,72 @@ public class ReportController {
         return ResponseEntity.ok(classAttendances);
     }
 
+    @GetMapping("/attendanceClasses/{dateYear}/{dateMonth}")
+    public ResponseEntity<List<ClassReportAttendanceDTO>> reportClasses(
+            @PathVariable @Valid Integer dateYear,
+            @PathVariable @Valid Integer dateMonth) {
+        List<EntityClass> classes = serviceClass.getAll();
+        Date dateFrom = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth) + "-01");
+        Date dateTo = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth + 1) + "-01");
+        List<ClassReportAttendanceDTO> classAttendances = new ArrayList<>();
+        for (EntityClass entityClass : classes) {
+            ClassReportAttendanceDTO classReportAttendanceDTO = new ClassReportAttendanceDTO();
+            classReportAttendanceDTO.setClassName(entityClass.getName());
+            classReportAttendanceDTO.setEducationStage(entityClass.getEnumEducationStage());
+            List<EntityLesson> classLessons = serviceLesson.findAllByClass(entityClass);
+            classReportAttendanceDTO.setHoursPerWeek(classLessons.size());
+            List<EntityStudent> students = serviceStudent.findAllByStudentClass(entityClass);
+            List<StudentTotalAttendanceDTO> studentTotalAttendanceDTOS = new ArrayList<>();
+            int totalHours = 0;
+            for (EntityStudent student : students) {
+                StudentTotalAttendanceDTO studentTotalAttendance = new StudentTotalAttendanceDTO();
+                studentTotalAttendance.setFirstName(student.getUsers().getFirstName());
+                studentTotalAttendance.setLastName(student.getUsers().getLastName());
+                List<EntityPresence> presences = servicePresence.find(student, dateFrom, dateTo);
+                studentTotalAttendance.setAttendedHours(presences.stream().filter(EntityPresence::getWasPresent).count());
+                studentTotalAttendanceDTOS.add(studentTotalAttendance);
+                totalHours = presences.size();
+            }
+            classReportAttendanceDTO.setTotalHours(totalHours);
+            classReportAttendanceDTO.setStudents(studentTotalAttendanceDTOS);
+            classAttendances.add(classReportAttendanceDTO);
+        }
+        System.out.println(dateFrom);
+        System.out.println(dateTo);
+        return ResponseEntity.ok(classAttendances);
+    }
+
+
     @GetMapping("/attendanceTeachers")
     public ResponseEntity<List<TeacherAttendanceDTO>> reportAttendanceTeacher() {
         List<EntityTeacher> teachers = serviceTeacher.getAll();
+        List<TeacherAttendanceDTO> teacherAttendanceDTOS = new ArrayList<>();
+        teachers.forEach(entityTeacher -> {
+            TeacherAttendanceDTO teacherAttendanceDTO = new TeacherAttendanceDTO();
+            teacherAttendanceDTO.setFirstName(entityTeacher.getUsers().getFirstName());
+            teacherAttendanceDTO.setLastName(entityTeacher.getUsers().getLastName());
+            List<EntityTeacherCourse> teacherCourses = serviceTeacherCourse.findByTeacher(entityTeacher);
+            List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesInWithInactive(teacherCourses);
+            teacherAttendanceDTO.setHoursPerWeek(teacherLessons.size());
+            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons)
+                    .stream()
+                    .filter(distinctByKeys(EntityPresence::getLesson, EntityPresence::getDate))
+                    .count();
+            teacherAttendanceDTO.setTotalHours(attendedHours);
+            teacherAttendanceDTO.setAttendedHours(attendedHours);
+            teacherAttendanceDTOS.add(teacherAttendanceDTO);
+        });
+        return ResponseEntity.ok(teacherAttendanceDTOS);
+    }
+
+    //TODO::CHANGE
+    @GetMapping("/attendanceTeachers/{dateYear}/{dateMonth}")
+    public ResponseEntity<List<TeacherAttendanceDTO>> reportAttendanceTeacher(
+            @PathVariable @Valid Integer dateYear,
+            @PathVariable @Valid Integer dateMonth) {
+        List<EntityTeacher> teachers = serviceTeacher.getAll();
+        Date dateFrom = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth) + "-01");
+        Date dateTo = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth + 1) + "-01");
         List<TeacherAttendanceDTO> teacherAttendanceDTOS = new ArrayList<>();
         teachers.forEach(entityTeacher -> {
             TeacherAttendanceDTO teacherAttendanceDTO = new TeacherAttendanceDTO();
