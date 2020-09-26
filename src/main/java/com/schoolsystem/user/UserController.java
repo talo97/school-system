@@ -208,6 +208,28 @@ public class UserController {
         }
     }
 
+
+    @ApiOperation(value = "Admin only, change user information")
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<?> editUser(@Valid@PathVariable Long userId, @Valid @RequestBody UserPutDTO userPutDTO){
+        EntityUser currentUser = serviceUser.getCurrentUserFromToken().get();
+        if(currentUser.getUserType() ==EnumUserType.ADMIN){
+            Optional<EntityUser> userOptional = serviceUser.get(userId);
+            if(userOptional.isPresent()){
+                EntityUser user = userOptional.get();
+                user.setPhoneNumber(userPutDTO.getPhoneNumber());
+                user.setEmail(userPutDTO.getEmail());
+                user.setBirthDate(userPutDTO.getBirthDate());
+                user.setFirstName(userPutDTO.getFirstName());
+                user.setLastName(userPutDTO.getLastName());
+                serviceUser.update(user);
+                return ResponseEntity.ok().build();
+            }
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
     //XDDDDDDDD plz don't look
     @PostMapping("/parentsStudents")
     public ResponseEntity<ParentStudentGetDTO> addParentStudent(@Valid @RequestBody ParentStudentPostDTO toSave) {
