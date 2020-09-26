@@ -199,11 +199,12 @@ public class TestController {
     }
 
     private void saveAttendances() {
-        //dodac jeden tydzien obecnosci
-        //21 - 25/ 09/ 2020
         EntityClass classA = serviceClass.get(1L).get();
         EntityClass classB = serviceClass.get(2L).get();
-        String stringDate = "2020-09-07";
+        String stringDate = "2020-08-03";
+        saveAttendanceClass(classA, stringDate);
+        saveAttendanceClass(classB, stringDate);
+        stringDate = "2020-09-07";
         saveAttendanceClass(classA, stringDate);
         saveAttendanceClass(classB, stringDate);
         stringDate = "2020-09-14";

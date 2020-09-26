@@ -152,8 +152,15 @@ public class ReportController {
             @PathVariable @Valid Integer dateYear,
             @PathVariable @Valid Integer dateMonth) {
         List<EntityTeacher> teachers = serviceTeacher.getAll();
+        if (dateMonth > 12 || dateMonth < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        if(dateMonth==12){
+            dateMonth = 1;
+            dateYear++;
+        }
         Date dateFrom = Date.valueOf(LocalDate.of(dateYear, dateMonth, 1));
-        Date dateTo = Date.valueOf(LocalDate.of(dateYear, dateMonth+1, 1));
+        Date dateTo = Date.valueOf(LocalDate.of(dateYear, dateMonth + 1, 1));
         List<TeacherAttendanceDTO> teacherAttendanceDTOS = new ArrayList<>();
         teachers.forEach(entityTeacher -> {
             TeacherAttendanceDTO teacherAttendanceDTO = new TeacherAttendanceDTO();
