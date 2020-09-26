@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class CourseGradeDTO {
     private String courseName;
-    private double averageGrade;
+    private String averageGrade;
 
 }

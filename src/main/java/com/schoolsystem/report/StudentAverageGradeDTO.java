@@ -9,6 +9,6 @@ import java.util.List;
 public class StudentAverageGradeDTO {
     private String firstName;
     private String lastName;
-    private double averageGradeTotal;
+    private String averageGradeTotal;
     private List<CourseGradeDTO> courseGrades;
 }

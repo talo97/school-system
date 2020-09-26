@@ -155,7 +155,7 @@ public class ReportController {
         if (dateMonth > 12 || dateMonth < 0) {
             return ResponseEntity.badRequest().build();
         }
-        if(dateMonth==12){
+        if (dateMonth == 12) {
             dateMonth = 1;
             dateYear++;
         }
@@ -219,7 +219,11 @@ public class ReportController {
             averageGrade = BigDecimal.valueOf(averageGrade)
                     .setScale(1, RoundingMode.HALF_UP)
                     .doubleValue();
-            courseGradeDTO.setAverageGrade(averageGrade);
+            if (averageGrade < 0) {
+                courseGradeDTO.setAverageGrade("Brak ocen");
+            } else {
+                courseGradeDTO.setAverageGrade(String.valueOf(averageGrade));
+            }
             courseGrades.add(courseGradeDTO);
         }
         if (totalTeacherCoursesWithMarks != 0) {
@@ -231,7 +235,11 @@ public class ReportController {
         averageGradeTotal = BigDecimal.valueOf(averageGradeTotal)
                 .setScale(1, RoundingMode.HALF_UP)
                 .doubleValue();
-        studentAverageGrade.setAverageGradeTotal(averageGradeTotal);
+        if (averageGradeTotal < 0) {
+            studentAverageGrade.setAverageGradeTotal("Brak ocen");
+        } else {
+            studentAverageGrade.setAverageGradeTotal(String.valueOf(averageGradeTotal));
+        }
         return studentAverageGrade;
     }
 
