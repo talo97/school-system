@@ -21,7 +21,7 @@ public interface ServiceLesson extends CommonService<EntityLesson> {
 
     List<EntityLesson> findAllByTeacher(EntityTeacher entityTeacher);
 
-    List<EntityLesson> findAllByTeacherCoursesIn(List<EntityTeacherCourse> teacherCourses);
+    List<EntityLesson> findAllByTeacherCoursesInWithInactive(List<EntityTeacherCourse> teacherCourses);
 
     List<EntityLesson> findAllByTeacherAndClass(EntityTeacher entityTeacher, EntityClass studentClass);
 

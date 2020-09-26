@@ -64,8 +64,8 @@ public class ServiceLessonImpl extends CommonServiceImpl<EntityLesson, DaoLesson
     }
 
     @Override
-    public List<EntityLesson> findAllByTeacherCoursesIn(List<EntityTeacherCourse> teacherCourses) {
-        return repository.findAllByTeacherCourseInAndActiveIsTrue(teacherCourses);
+    public List<EntityLesson> findAllByTeacherCoursesInWithInactive(List<EntityTeacherCourse> teacherCourses) {
+        return repository.findAllByTeacherCourseIn(teacherCourses);
     }
 
     @Override

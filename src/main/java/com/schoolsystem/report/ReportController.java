@@ -97,7 +97,7 @@ public class ReportController {
             teacherAttendanceDTO.setFirstName(entityTeacher.getUsers().getFirstName());
             teacherAttendanceDTO.setLastName(entityTeacher.getUsers().getLastName());
             List<EntityTeacherCourse> teacherCourses = serviceTeacherCourse.findByTeacher(entityTeacher);
-            List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesIn(teacherCourses);
+            List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesInWithInactive(teacherCourses);
             teacherAttendanceDTO.setHoursPerWeek(teacherLessons.size());
             long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons)
                     .stream()

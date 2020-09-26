@@ -20,7 +20,10 @@ public interface DaoLesson extends JpaRepository<EntityLesson, Long> {
     List<EntityLesson> findAllByEntityClassAndActiveIsTrue(EntityClass entityClass);
 
     List<EntityLesson> findAllByTeacherCourseAndActiveIsTrue(EntityTeacherCourse teacherCourse);
+
     List<EntityLesson> findAllByTeacherCourseInAndActiveIsTrue(List<EntityTeacherCourse> teacherCourse);
+
+    List<EntityLesson> findAllByTeacherCourseIn(List<EntityTeacherCourse> teacherCourse);
 
     List<EntityLesson> findAllByTeacherCourseAndEntityClassAndActiveIsTrue(EntityTeacherCourse teacherCourse, EntityClass entityClass);
 
