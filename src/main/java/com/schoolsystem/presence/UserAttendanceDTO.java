@@ -14,6 +14,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAttendanceDTO {
+    private Long id;
     private EnumDayOfWeek dayOfWeek;
     private EnumLessonNumber lessonNumber;
     private Boolean wasPresent;
@@ -21,6 +22,7 @@ public class UserAttendanceDTO {
     private Date date;
 
     UserAttendanceDTO(EntityPresence presence) {
+        this.id = presence.getId();
         this.dayOfWeek = presence.getLesson().getDayOfWeek();
         this.lessonNumber = presence.getLesson().getLessonNumber();
         this.wasPresent = presence.getWasPresent();

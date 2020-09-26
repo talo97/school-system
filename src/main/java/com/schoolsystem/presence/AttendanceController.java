@@ -15,6 +15,7 @@ import com.schoolsystem.teacher.EntityTeacher;
 import com.schoolsystem.user.EntityUser;
 import com.schoolsystem.user.EnumUserType;
 import com.schoolsystem.user.ServiceUser;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -113,6 +114,19 @@ public class AttendanceController {
             servicePresence.saveOrUpdateAll(studentsPresence, entityLesson);
             return ResponseEntity.ok().body("Saved successfully");
         }).orElse(ResponseEntity.badRequest().body("Wrong arguments, couldn't find lesson"));
+    }
+
+    @ApiOperation(value = "Change attendance for given presence by ID")
+    @PutMapping("/attendance/{attendanceID}")
+    public ResponseEntity<?> changeAttendance(@Valid @PathVariable Long attendanceID) {
+        Optional<EntityPresence> presence = servicePresence.get(attendanceID);
+        if (presence.isPresent()) {
+            presence.get().setWasPresent(!presence.get().getWasPresent());
+            servicePresence.update(presence.get());
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @ApiOperation(value = "Show current user(student) attendance.",
