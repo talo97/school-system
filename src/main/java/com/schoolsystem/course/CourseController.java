@@ -72,13 +72,13 @@ public class CourseController {
         Optional<EntityCourse> course = serviceCourse.get(id);
         if (course.isPresent()) {
             if (!serviceTeacherCourse.findByCourse(course.get()).isEmpty()) {
-                return ResponseEntity.badRequest().body("Course is used in TeacherCourse table. Can't delete it until all associations are removed");
+                return ResponseEntity.badRequest().build();
             } else {
                 serviceCourse.delete(course.get());
-                return ResponseEntity.ok("Course was successfully removed");
+                return ResponseEntity.ok().build();
             }
         } else {
-            return ResponseEntity.badRequest().body("Course with given ID doesn't exist");
+            return ResponseEntity.badRequest().build();
         }
     }
 
