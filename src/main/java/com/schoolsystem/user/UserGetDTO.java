@@ -20,4 +20,5 @@ public class UserGetDTO {
     private Date birthDate;
     private EnumUserType userType;
     private Long classId = 0L;
+    private String className = "";
 }

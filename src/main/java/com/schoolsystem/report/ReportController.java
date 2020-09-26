@@ -149,7 +149,6 @@ public class ReportController {
         return ResponseEntity.ok(teacherAttendanceDTOS);
     }
 
-    //TODO::CHANGE
     @GetMapping("/attendanceTeachers/{dateYear}/{dateMonth}")
     public ResponseEntity<List<TeacherAttendanceDTO>> reportAttendanceTeacher(
             @PathVariable @Valid Integer dateYear,
@@ -165,7 +164,7 @@ public class ReportController {
             List<EntityTeacherCourse> teacherCourses = serviceTeacherCourse.findByTeacher(entityTeacher);
             List<EntityLesson> teacherLessons = serviceLesson.findAllByTeacherCoursesInWithInactive(teacherCourses);
             teacherAttendanceDTO.setHoursPerWeek(teacherLessons.size());
-            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons)
+            long attendedHours = (long) servicePresence.getPresenceFromLessons(teacherLessons, dateFrom, dateTo)
                     .stream()
                     .filter(distinctByKeys(EntityPresence::getLesson, EntityPresence::getDate))
                     .count();

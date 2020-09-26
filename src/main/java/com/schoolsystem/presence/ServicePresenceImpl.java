@@ -68,7 +68,7 @@ public class ServicePresenceImpl extends CommonServiceImpl<EntityPresence, DaoPr
 
     @Override
     public List<EntityPresence> getPresenceFromLessons(List<EntityLesson> lessons, Date dateFrom, Date dateTo) {
-        return null;
+        return repository.findAllByLessonInAndDateGreaterThanEqualAndDateLessThan(lessons, dateFrom, dateTo);
     }
 
     @Override

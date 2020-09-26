@@ -167,6 +167,10 @@ public class UserController {
             UserGetDTO temp = modelMapper.map(e.getUsers(), UserGetDTO.class);
             temp.setId(e.getId());
             temp.setUserId(e.getUsers().getId());
+            Optional<EntityClass> optionalEntityClass = serviceClass.findBySupervisor(e);
+            optionalEntityClass.ifPresent(entityClass -> {
+                temp.setClassName(entityClass.getName());
+            });
             lst.add(temp);
         });
         return ResponseEntity.ok(lst);
@@ -206,6 +210,7 @@ public class UserController {
         });
         return ResponseEntity.ok(lst);
     }
+
     @GetMapping("/parentsWithStudents")
     public ResponseEntity<List<ParentWithStudentDTO>> getParentsWithStudents() {
         List<ParentWithStudentDTO> lst = new ArrayList<>();
