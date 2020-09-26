@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -55,7 +57,9 @@ public class LessonController {
             temp.setTeacherCourse(teacherCourseTemp);
             dtoList.add(temp);
         });
-        return dtoList;
+        return dtoList.stream().
+                sorted(Comparator.comparingInt(lessonGetDTO -> lessonGetDTO.getLessonNumber().getHour())).
+                collect(Collectors.toList());
     }
 
     @GetMapping("/lessons")
