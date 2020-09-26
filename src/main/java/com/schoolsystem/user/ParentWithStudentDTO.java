@@ -3,6 +3,8 @@ package com.schoolsystem.user;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @Setter
 @Getter
 public class ParentWithStudentDTO {
@@ -13,4 +15,5 @@ public class ParentWithStudentDTO {
     private String email;
     private String studentFirstName = "";
     private String studentLastName = "";
+    private Date birthDate;
 }

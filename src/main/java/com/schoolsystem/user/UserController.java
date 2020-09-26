@@ -206,6 +206,9 @@ public class UserController {
             temp.setUserId(e.getUsers().getId());
             temp.setParentFirstName(e.getParent().getUsers().getFirstName());
             temp.setParentLastName(e.getParent().getUsers().getLastName());
+            temp.setClassName(e.getStudentClass().getName());
+            temp.setSupervisorName(e.getStudentClass().getSupervisor().getUsers().getFirstName());
+            temp.setSupervisorLastName(e.getStudentClass().getSupervisor().getUsers().getLastName());
             lst.add(temp);
         });
         return ResponseEntity.ok(lst);

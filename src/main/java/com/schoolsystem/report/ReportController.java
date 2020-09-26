@@ -22,10 +22,8 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -154,8 +152,8 @@ public class ReportController {
             @PathVariable @Valid Integer dateYear,
             @PathVariable @Valid Integer dateMonth) {
         List<EntityTeacher> teachers = serviceTeacher.getAll();
-        Date dateFrom = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth) + "-01");
-        Date dateTo = Date.valueOf(dateYear + "-" + String.valueOf(dateMonth + 1) + "-01");
+        Date dateFrom = Date.valueOf(LocalDate.of(dateYear, dateMonth, 1));
+        Date dateTo = Date.valueOf(LocalDate.of(dateYear, dateMonth+1, 1));
         List<TeacherAttendanceDTO> teacherAttendanceDTOS = new ArrayList<>();
         teachers.forEach(entityTeacher -> {
             TeacherAttendanceDTO teacherAttendanceDTO = new TeacherAttendanceDTO();
