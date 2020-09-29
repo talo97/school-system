@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 public class CourseController {
 
     private final ServiceCourse serviceCourse;
@@ -95,7 +95,7 @@ public class CourseController {
                 return ResponseEntity.ok(modelMapper.map(course.get(), CourseGetDTO.class));
             }
         } else {
-            return ResponseEntity.badRequest().body("Course with given ID doesn't exist");
+            return ResponseEntity.badRequest().build();
         }
     }
 

@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/report")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 public class ReportController {
 
 

@@ -37,7 +37,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 public class TestController {
 
     private ServiceUser serviceUser;

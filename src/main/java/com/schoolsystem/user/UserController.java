@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 public class UserController {
 
     private final ServiceUser serviceUser;
