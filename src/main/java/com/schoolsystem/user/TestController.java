@@ -201,10 +201,7 @@ public class TestController {
     private void saveAttendances() {
         EntityClass classA = serviceClass.get(1L).get();
         EntityClass classB = serviceClass.get(2L).get();
-        String stringDate = "2020-08-03";
-        saveAttendanceClass(classA, stringDate);
-        saveAttendanceClass(classB, stringDate);
-        stringDate = "2020-09-07";
+        String stringDate = "2020-09-07";
         saveAttendanceClass(classA, stringDate);
         saveAttendanceClass(classB, stringDate);
         stringDate = "2020-09-14";
@@ -212,6 +209,9 @@ public class TestController {
         saveAttendanceClass(classB, stringDate);
         //fast cheat to save first two days of next week
         stringDate = "2020-09-21";
+        saveAttendanceClass(classA, stringDate);
+        saveAttendanceClass(classB, stringDate);
+        stringDate = "2020-09-28";
         saveAttendanceClassOnlyTwoDays(classA, stringDate);
         saveAttendanceClassOnlyTwoDays(classB, stringDate);
     }

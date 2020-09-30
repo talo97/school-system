@@ -69,18 +69,16 @@ public class LessonController {
 
     @GetMapping("/lessonsClass/{id}")
     public ResponseEntity<List<LessonGetDTO>> getLessons(@Valid @PathVariable Long id) {
-        return serviceClass.get(id).map(entityClass -> {
-            return ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByClass(entityClass)));
-        }).orElse(ResponseEntity.badRequest().build());
+        return serviceClass.get(id).map(entityClass -> ResponseEntity.ok(
+                mapEntityToGetDTO(serviceLesson.
+                        findAllByClass(entityClass)))).
+                orElse(ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/lessonsTeacher/{id}")
     public ResponseEntity<List<LessonGetDTO>> getLessonsTeacher(@Valid @PathVariable Long id) {
-        return serviceTeacher.get(id).map(entityTeacher -> ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByTeacher(entityTeacher)))).orElse(ResponseEntity.badRequest().build());
-//
-//        List<LessonGetDTO> dtoList = new ArrayList<>();
-//        serviceTeacher.get(id).ifPresent(e -> dtoList.addAll(mapEntityToGetDTO(serviceLesson.findAllByTeacher(e))));
-//        return ResponseEntity.ok().body(dtoList);
+        return serviceTeacher.get(id).map(entityTeacher ->
+                ResponseEntity.ok(mapEntityToGetDTO(serviceLesson.findAllByTeacher(entityTeacher)))).orElse(ResponseEntity.badRequest().build());
     }
 
     @ApiOperation(value = "Add new lesson record.",
@@ -138,28 +136,24 @@ public class LessonController {
     @PutMapping("/lessons/{id}")
     public ResponseEntity<?> editLesson(@Valid @RequestBody Long teacherCourseId, @Valid @PathVariable Long id) {
         Optional<EntityTeacherCourse> teacherCourse = serviceTeacherCourse.get(teacherCourseId);
-        if (teacherCourse.isPresent()) {
-            return serviceLesson.get(id).map(lesson -> {
-                if (!serviceLesson.isTeacherAvailable(teacherCourse.get().getTeacher(), lesson.getDayOfWeek(), lesson.getLessonNumber())) {
-                    return ResponseEntity.badRequest().body("Teacher is not available in given day and lesson number");
-                }
-                if (lesson.isActive()) {
-                    EntityLesson newLesson = new EntityLesson();
-                    newLesson.setEntityClass(lesson.getEntityClass());
-                    newLesson.setDayOfWeek(lesson.getDayOfWeek());
-                    newLesson.setLessonNumber(lesson.getLessonNumber());
-                    newLesson.setTeacherCourse(teacherCourse.get());
-                    lesson.setActive(false);
-                    serviceLesson.update(lesson);
-                    serviceLesson.save(newLesson);
-                    return ResponseEntity.ok().body("updated successfully");
-                } else {
-                    return ResponseEntity.badRequest().build();
-                }
-            }).orElse(ResponseEntity.badRequest().build());
-        }else{
-            return ResponseEntity.badRequest().build();
-        }
+        return teacherCourse.map(entityTeacherCourse -> serviceLesson.get(id).map(lesson -> {
+            if (!serviceLesson.isTeacherAvailable(entityTeacherCourse.getTeacher(), lesson.getDayOfWeek(), lesson.getLessonNumber())) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (lesson.isActive()) {
+                EntityLesson newLesson = new EntityLesson();
+                newLesson.setEntityClass(lesson.getEntityClass());
+                newLesson.setDayOfWeek(lesson.getDayOfWeek());
+                newLesson.setLessonNumber(lesson.getLessonNumber());
+                newLesson.setTeacherCourse(entityTeacherCourse);
+                lesson.setActive(false);
+                serviceLesson.update(lesson);
+                serviceLesson.save(newLesson);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }).orElse(ResponseEntity.badRequest().build())).orElseGet(() -> ResponseEntity.badRequest().build());
 
     }
 

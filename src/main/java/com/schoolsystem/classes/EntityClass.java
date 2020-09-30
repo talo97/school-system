@@ -15,10 +15,8 @@ public class EntityClass extends CommonEntity implements Comparable<EntityClass>
 
     @Column(name = "name")
     private String name;
-
     @Column(name = "education_stage")
     private EnumEducationStage enumEducationStage;
-
     @OneToOne
     @JoinColumn(name = "supervisor")
     private EntityTeacher supervisor;
